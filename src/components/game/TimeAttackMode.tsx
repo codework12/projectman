@@ -306,7 +306,7 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
                 charClass = 'minimal-char minimal-current caret';
               }
               
-              const animationDelay = `${idx * 0.05}s`;
+              const animationDelay = idx * 0.05;
               
               return (
                 <motion.span
