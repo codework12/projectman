@@ -294,7 +294,7 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
       </motion.div>
       <div className="max-w-3xl w-full space-y-8 relative z-10">
         <div 
-          className="minimal-typing-bar-container w-full mb-8" 
+          className="minimal-typing-bar-container w-full mb-8 scrollbar-none" 
           ref={charBarRef}
         >
           <div className="minimal-typing-bar">
@@ -305,13 +305,19 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
               } else if (idx === userInput.length) {
                 charClass = 'minimal-char minimal-current caret';
               }
+              
+              const animationDelay = `${idx * 0.05}s`;
+              
               return (
-                <span
+                <motion.span
                   key={idx}
                   className={charClass}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: animationDelay, duration: 0.3 }}
                 >
                   {char}
-                </span>
+                </motion.span>
               );
             })}
           </div>

@@ -77,6 +77,15 @@
     background: rgba(10, 10, 18, 0.6);
     border: 1px solid rgba(155, 135, 245, 0.2);
   }
+  
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes float {
@@ -350,16 +359,20 @@
 }
 
 .minimal-typing-bar-container {
-  background-color: #222222;
+  background-color: rgba(34, 34, 34, 0.6);
   position: relative;
   min-height: 60px;
   width: 100%;
-  border-radius: 0;
+  border-radius: 8px;
   overflow-x: auto;
   white-space: nowrap;
   padding: 16px;
   display: flex;
   align-items: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
 }
 
 .minimal-typing-bar {
@@ -371,33 +384,83 @@
   position: relative;
   z-index: 2;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
 }
 
 .minimal-char {
   display: inline-block;
-  transition: all 0.1s ease-out;
+  transition: all 0.2s ease-out;
+  margin: 0 2px;
+  position: relative;
+  overflow: visible;
 }
 
 .minimal-default {
-  color: #9a9a9a;
+  color: rgba(154, 154, 154, 0.6);
+  text-shadow: 0 0 10px rgba(154, 154, 154, 0.2);
 }
 
 .minimal-correct {
   color: #bdbdbd;
+  text-shadow: 0 0 8px rgba(189, 189, 189, 0.4);
 }
 
 .minimal-incorrect {
   color: #f44336;
+  text-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
   text-decoration: underline;
 }
 
 .minimal-current {
   border-right: 2px solid #ffeb3b;
-  margin-right: 1px;
+  margin-right: 3px;
   animation: minimal-cursor-blink 1s infinite steps(1);
+  padding-right: 2px;
 }
 
 @keyframes minimal-cursor-blink {
   0%, 100% { border-color: #ffeb3b; }
   50% { border-color: transparent; }
+}
+
+@keyframes float-in {
+  0% { 
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.minimal-char-appear {
+  animation: float-in 0.3s forwards;
+}
+
+/* Media query for dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .minimal-typing-bar-container {
+    background-color: rgba(20, 20, 20, 0.7);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* Media query for light mode compatibility */
+@media (prefers-color-scheme: light) {
+  .minimal-typing-bar-container {
+    background-color: rgba(245, 245, 245, 0.7);
+    border-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .minimal-default {
+    color: rgba(80, 80, 80, 0.6);
+  }
+  
+  .minimal-correct {
+    color: #555555;
+  }
 }
