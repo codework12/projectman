@@ -39,17 +39,14 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
   const [timerStarted, setTimerStarted] = useState(false);
   const { toast } = useToast();
 
-  // Track Tab key state
   const [isTabPressed, setIsTabPressed] = useState(false);
 
-  // Generate random sentences using the shared word list
   const sentences = [
     getRandomWords(30, true) as string,
     getRandomWords(40, true) as string,
     getRandomWords(50, true) as string,
   ];
 
-  // Remove separate 'press any key to start' logic. Start timer and typing together on first valid key.
   const [waitingForFirstKey, setWaitingForFirstKey] = useState(true);
 
   const [shuffledSentences, setShuffledSentences] = useState<string[]>(() => shuffleSentenceWords(shuffleArray(sentences)));
@@ -67,7 +64,7 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
           setGameStarted(true);
           setTimerStarted(true);
           setWaitingForFirstKey(false);
-          setUserInput(e.key); // This ensures the first key is counted as input
+          setUserInput(e.key);
           window.removeEventListener('keydown', handleFirstKey);
         }
       };
@@ -76,7 +73,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     }
   }, [waitingForFirstKey]);
 
-  // Timer effect (only runs if timerStarted)
   useEffect(() => {
     if (timerStarted && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -92,37 +88,32 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     }
   }, [timerStarted, timeLeft, onGameOver]);
 
-  // Handle key down events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
-        e.preventDefault(); // Prevent tab from changing focus
+        e.preventDefault();
         setIsTabPressed(true);
       } else if (e.key === 'Enter' && isTabPressed && gameStarted) {
         e.preventDefault();
-        window.location.reload(); // Restart the game
+        window.location.reload();
       }
     };
 
-    // Handle key up events
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {
         setIsTabPressed(false);
       }
     };
 
-    // Add event listeners
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // Clean up
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [isTabPressed, gameStarted]);
 
-  // Remove wordList and word states, use sentences array and sentence states
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [currentSentence, setCurrentSentence] = useState(shuffledSentences[0]);
   const [typedSentence, setTypedSentence] = useState("");
@@ -131,7 +122,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
   const [totalTypedChars, setTotalTypedChars] = useState(0);
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
 
-  // When the timer starts or resets, reset sentence state and char counters
   useEffect(() => {
     setCurrentSentenceIndex(0);
     setCurrentSentence(shuffledSentences[0]);
@@ -142,19 +132,16 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     setTotalCorrectChars(0);
   }, [selectedTime, gameStarted]);
 
-  // --- Monkeytype-style state ---
   const [userInput, setUserInput] = useState("");
   const [charIndex, setCharIndex] = useState(0);
   const charBarRef = useRef<HTMLDivElement>(null);
 
-  // Main keydown handler (only active after first key)
   useEffect(() => {
     if (!waitingForFirstKey) {
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
           setUserInput(prev => {
             if (prev.length < currentSentence.length) {
-              // Update char counters
               setTotalTypedChars(chars => chars + 1);
               setTotalCorrectChars(chars =>
                 e.key === currentSentence[prev.length] ? chars + 1 : chars
@@ -166,7 +153,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
         } else if (e.key === 'Backspace') {
           setUserInput(prev => prev.slice(0, -1));
           setTotalTypedChars(chars => (chars > 0 ? chars - 1 : 0));
-          // Don't decrement totalCorrectChars (can't know if removed char was correct)
         } else if (e.key === 'Enter' && userInput.length === currentSentence.length) {
           const nextIndex = (currentSentenceIndex + 1) % shuffledSentences.length;
           setCurrentSentenceIndex(nextIndex);
@@ -182,7 +168,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     }
   }, [waitingForFirstKey, userInput, currentSentence, currentSentenceIndex, shuffledSentences]);
 
-  // Scroll caret into view
   useEffect(() => {
     if (charBarRef.current) {
       const caret = charBarRef.current.querySelector('.caret');
@@ -192,12 +177,10 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     }
   }, [userInput]);
 
-  // Calculate WPM and accuracy for characters
   const elapsedMinutes = selectedTime ? (selectedTime - timeLeft) / 60 : 1;
   const wpm = elapsedMinutes > 0 ? Math.round((totalCorrectChars / 5) / elapsedMinutes) : 0;
   const accuracy = totalTypedChars > 0 ? Math.round((totalCorrectChars / totalTypedChars) * 100) : 100;
 
-  // When selecting a new time, shuffle the sentences and their words
   const startGame = (duration: number) => {
     const newShuffled = shuffleSentenceWords(shuffleArray(sentences));
     setShuffledSentences(newShuffled);
@@ -211,7 +194,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
     setWaitingForFirstKey(true);
   };
 
-  // On initial mount, shuffle sentences and their words
   useEffect(() => {
     const newShuffled = shuffleSentenceWords(shuffleArray(sentences));
     setShuffledSentences(newShuffled);
@@ -221,7 +203,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden bg-background">
-      {/* Time Selection Sidebar */}
       <div className="fixed right-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-30">
         {[15, 30, 60, 120].map((duration) => (
           <button
@@ -235,7 +216,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
         ))}
       </div>
 
-      {/* Menu Bar */}
       <div className="absolute top-4 right-4 z-50">
         <Sheet>
           <SheetTrigger asChild>
@@ -247,7 +227,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
           <SheetContent className="w-[400px] bg-black/95 border-primary/50 backdrop-blur-xl p-0">
             <div className="h-full bg-[radial-gradient(circle_at_center,_var(--primary)_0%,_transparent_65%)] bg-[length:100%_100%] bg-center bg-no-repeat opacity-20 absolute inset-0"></div>
             <div className="relative h-full flex flex-col gap-8 p-6">
-              {/* Player Card */}
               <div className="flex items-center gap-4 p-4 rounded-xl bg-primary/5 border border-primary/20 hover:border-primary/40 transition-colors duration-300">
                 <Avatar className="w-16 h-16 border-2 border-primary/50 shadow-lg shadow-primary/20">
                   <AvatarImage src="https://github.com/shadcn.png" />
@@ -261,7 +240,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
                 </div>
               </div>
 
-              {/* Menu Options */}
               <div className="space-y-4">
                 <Button 
                   variant="outline" 
@@ -279,7 +257,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
                 </Button>
               </div>
 
-              {/* Stats Section */}
               <div className="mt-auto space-y-4 p-4 rounded-xl bg-primary/5 border border-primary/20">
                 <h3 className="text-lg font-semibold text-primary/80">Current Stats</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -298,15 +275,11 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
         </Sheet>
       </div>
 
-      {/* Background Effects */}
       <div className="absolute inset-0 bg-radial-gradient opacity-80"></div>
       <div className="absolute inset-0 bg-cyber-grid bg-grid opacity-20"></div>
       
-      {/* Animated particles */}
       <CyberParticles />
 
-      {/* Main Typing UI (always visible) */}
-      {/* Timer with visual enhancements */}
       <motion.div 
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -320,28 +293,31 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
         </div>
       </motion.div>
       <div className="max-w-3xl w-full space-y-8 relative z-10">
-        {/* Character-by-character bar */}
-        <div className="overflow-x-auto w-full border border-primary/20 rounded-xl bg-black/30 px-2 py-2 mb-8 whitespace-nowrap" style={{ maxHeight: '3.5rem' }} ref={charBarRef}>
-          {currentSentence.split('').map((char, idx) => {
-            let color = 'text-gray-400';
-            if (idx < userInput.length) {
-              color = userInput[idx] === char ? 'text-green-400' : 'text-red-400';
-            } else if (idx === userInput.length) {
-              color = 'text-primary underline';
-            }
-            return (
-              <span
-                key={idx}
-                className={`text-lg md:text-xl font-mono transition-colors duration-200 ${color} ${idx === userInput.length ? 'caret' : ''}`}
-                style={idx === userInput.length ? { borderLeft: '2px solid #a78bfa', animation: 'blink 1s steps(1) infinite' } : {}}
-              >
-                {char}
-              </span>
-            );
-          })}
+        <div 
+          className="cosmic-typing-bar-container w-full overflow-hidden relative mb-8" 
+          ref={charBarRef}
+        >
+          <div className="cosmic-typing-bar">
+            {currentSentence.split('').map((char, idx) => {
+              let charClass = 'cosmic-char cosmic-default';
+              if (idx < userInput.length) {
+                charClass = userInput[idx] === char ? 'cosmic-char cosmic-correct' : 'cosmic-char cosmic-incorrect';
+              } else if (idx === userInput.length) {
+                charClass = 'cosmic-char cosmic-current caret';
+              }
+              return (
+                <span
+                  key={idx}
+                  className={charClass}
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </div>
+          <div className="cosmic-particles-overlay"></div>
         </div>
       </div>
-      {/* Stats Bar - Redesigned Glassmorphism */}
       <div className="absolute left-8 bottom-8 flex flex-col gap-3 px-8 py-6 rounded-2xl shadow-xl border border-primary/60 backdrop-blur-md bg-white/10 bg-gradient-to-br from-primary/10 to-black/40" style={{ boxShadow: '0 4px 32px 0 rgba(80, 80, 255, 0.18)' }}>
         <div className="flex items-center gap-3">
           <span className="text-3xl font-bold text-cyan-400 drop-shadow-glow">
@@ -358,7 +334,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
           <span className="text-3xl font-extrabold text-white ml-2">{accuracy}%</span>
         </div>
       </div>
-      {/* Tab+Enter Button */}
       <motion.div 
         className="absolute bottom-6 text-center text-sm text-white/50"
         initial={{ opacity: 0, y: 10 }}

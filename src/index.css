@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Exo+2:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Exo+2:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100;300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -79,6 +79,8 @@
     border: 1px solid rgba(155, 135, 245, 0.2);
   }
 }
+
+/* ... keep existing code (animations and other styles) */
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -191,4 +193,164 @@
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* NEW: Futuristic Typing Bar Styles */
+.cosmic-typing-bar-container {
+  position: relative;
+  background: linear-gradient(180deg, #0c1224 0%, #05070e 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(137, 123, 255, 0.5);
+  padding: 16px 20px;
+  box-shadow: 0 0 20px rgba(137, 123, 255, 0.3),
+              inset 0 0 8px rgba(137, 123, 255, 0.1);
+  overflow-x: auto;
+  white-space: nowrap;
+  min-height: 70px;
+  max-height: 70px;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: all 0.3s ease;
+}
+
+.cosmic-typing-bar-container:hover {
+  border-color: rgba(137, 123, 255, 0.8);
+  box-shadow: 0 0 25px rgba(137, 123, 255, 0.4),
+              inset 0 0 12px rgba(137, 123, 255, 0.15);
+}
+
+.cosmic-typing-bar {
+  position: relative;
+  z-index: 2;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.cosmic-char {
+  display: inline-block;
+  font-size: 24px;
+  padding: 0 1px;
+  transition: all 0.1s ease-out;
+}
+
+.cosmic-default {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.cosmic-correct {
+  color: #a0e4b0; /* Light green */
+  text-shadow: 0 0 8px rgba(160, 228, 176, 0.4);
+}
+
+.cosmic-incorrect {
+  color: #ff6b6b; /* Light red */
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+  opacity: 0.9;
+}
+
+.cosmic-current {
+  color: #897bff; /* Light purple */
+  text-shadow: 0 0 12px rgba(137, 123, 255, 0.7);
+  border-right: 2px solid #897bff;
+  animation: caret-pulse 1s infinite steps(1);
+  margin-right: 1px;
+  padding-right: 2px;
+}
+
+@keyframes caret-pulse {
+  0%, 100% { border-color: #897bff; }
+  50% { border-color: transparent; }
+}
+
+.cosmic-particles-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(137, 123, 255, 0.08) 0%, transparent 70%),
+    radial-gradient(circle at 70% 60%, rgba(137, 123, 255, 0.08) 0%, transparent 70%);
+  opacity: 0.8;
+  mix-blend-mode: screen;
+}
+
+/* Light Mode Styles */
+@media (prefers-color-scheme: light) {
+  .cosmic-typing-bar-container {
+    background: linear-gradient(180deg, #f1f0fb 0%, #ffffff 100%);
+    border: 1px solid rgba(137, 123, 255, 0.3);
+    box-shadow: 0 0 15px rgba(137, 123, 255, 0.15),
+                inset 0 0 5px rgba(137, 123, 255, 0.05);
+  }
+
+  .cosmic-default {
+    color: #666;
+  }
+
+  .cosmic-correct {
+    color: #38a169; /* Darker green for contrast */
+    text-shadow: 0 0 5px rgba(56, 161, 105, 0.2);
+  }
+
+  .cosmic-incorrect {
+    color: #e53e3e; /* Darker red for contrast */
+    text-shadow: 0 0 5px rgba(229, 62, 62, 0.2);
+  }
+
+  .cosmic-current {
+    color: #6366f1; /* Indigo */
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+    border-right: 2px solid #6366f1;
+  }
+  
+  @keyframes caret-pulse {
+    0%, 100% { border-color: #6366f1; }
+    50% { border-color: transparent; }
+  }
+
+  .cosmic-particles-overlay {
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.04) 0%, transparent 70%),
+      radial-gradient(circle at 70% 60%, rgba(99, 102, 241, 0.04) 0%, transparent 70%);
+    mix-blend-mode: multiply;
+  }
+}
+
+/* Floating particles animation */
+@keyframes float-particle {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateY(-30px) translateX(15px); opacity: 0; }
+}
+
+.cosmic-typing-bar-container::before,
+.cosmic-typing-bar-container::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(137, 123, 255, 0.6);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.cosmic-typing-bar-container::before {
+  bottom: 15px;
+  left: 20%;
+  animation: float-particle 3s ease-in-out infinite;
+}
+
+.cosmic-typing-bar-container::after {
+  bottom: 25px;
+  left: 70%;
+  animation: float-particle 4s ease-in-out 1s infinite;
 }
