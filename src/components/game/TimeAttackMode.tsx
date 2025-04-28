@@ -294,16 +294,16 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
       </motion.div>
       <div className="max-w-3xl w-full space-y-8 relative z-10">
         <div 
-          className="cosmic-typing-bar-container w-full overflow-hidden relative mb-8" 
+          className="minimal-typing-bar-container w-full mb-8" 
           ref={charBarRef}
         >
-          <div className="cosmic-typing-bar">
+          <div className="minimal-typing-bar">
             {currentSentence.split('').map((char, idx) => {
-              let charClass = 'cosmic-char cosmic-default';
+              let charClass = 'minimal-char minimal-default';
               if (idx < userInput.length) {
-                charClass = userInput[idx] === char ? 'cosmic-char cosmic-correct' : 'cosmic-char cosmic-incorrect';
+                charClass = userInput[idx] === char ? 'minimal-char minimal-correct' : 'minimal-char minimal-incorrect';
               } else if (idx === userInput.length) {
-                charClass = 'cosmic-char cosmic-current caret';
+                charClass = 'minimal-char minimal-current caret';
               }
               return (
                 <span
@@ -315,7 +315,6 @@ export const TimeAttackMode = ({ onScoreChange, onWpmChange, onGameOver }: TimeA
               );
             })}
           </div>
-          <div className="cosmic-particles-overlay"></div>
         </div>
       </div>
       <div className="absolute left-8 bottom-8 flex flex-col gap-3 px-8 py-6 rounded-2xl shadow-xl border border-primary/60 backdrop-blur-md bg-white/10 bg-gradient-to-br from-primary/10 to-black/40" style={{ boxShadow: '0 4px 32px 0 rgba(80, 80, 255, 0.18)' }}>
