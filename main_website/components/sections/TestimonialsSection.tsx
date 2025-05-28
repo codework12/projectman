@@ -161,7 +161,7 @@ const TestimonialsSection: React.FC = () => {
             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white shadow-md rounded-full h-10 w-10 md:h-12 md:w-12"
             onClick={prevTestimonial}
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="h-6 w-6 text-black" />
           </Button>
           
           <Button 
@@ -170,7 +170,7 @@ const TestimonialsSection: React.FC = () => {
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white shadow-md rounded-full h-10 w-10 md:h-12 md:w-12"
             onClick={nextTestimonial}
           >
-            <ChevronRight className="h-6 w-6" />
+            <ChevronRight className="h-6 w-6 text-black" />
           </Button>
           
           <div className="flex justify-center mt-6">

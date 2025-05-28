@@ -1,6 +1,7 @@
 "use client"
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LabTest } from '@/components/models/LabTest';
+import { labTests } from '@/components/data/labTests';
 
 export interface TestOrder {
   id: string;
@@ -105,118 +106,27 @@ const setLocalStorage = (key: string, value: string): void => {
 };
 
 export function TestOrderProvider({ children }: { children: ReactNode }) {
-  const [orders, setOrders] = useState<TestOrder[]>(() => {
-    // Mock data for demonstration - in a real app, this would be loaded from an API
-    const mockOrder: TestOrder = {
-      id: 'order-123456',
-      orderNumber: 'LAB1234',
-      orderDate: '2025-05-10T14:30:00Z',
-      status: 'completed',
-      tests: [
-        {
-          test: {
-            id: 'test-cbc',
-            name: 'Complete Blood Count (CBC)',
-            price: 49.99,
-            description: 'Measures several components and features of your blood.',
-            category: 'blood',
-            code: 'CBC001'
-          },
-          quantity: 1
-        }
-      ],
-      scheduledDate: '2025-05-12',
-      scheduledTime: '10:30 AM',
-      location: 'Downtown Medical Lab',
-      results: [
-        {
-          testId: 'test-cbc',
-          resultValue: 'Normal',
-          normalRange: '4.5-11.0 10^9/L',
-          unit: '10^9/L',
-          status: 'completed'
-        }
-      ],
-      userEmail: 'patient@example.com',
-      userName: 'John Doe',
-      totalAmount: 49.99,
-      paymentStatus: 'paid',
-      paymentMethod: 'credit_card',
-      paymentDate: '2025-05-10',
-      transactionId: 'TXN123456'
-    };
+  const [orders, setOrders] = useState<TestOrder[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-    // Add another mock order for a different user
-    const mockOrder2: TestOrder = {
-      id: 'order-789012',
-      orderNumber: 'LAB5678',
-      orderDate: '2025-05-15T09:15:00Z',
-      status: 'processing',
-      tests: [
-        {
-          test: {
-            id: 'test-gluc',
-            name: 'Glucose Test',
-            price: 29.99,
-            description: 'Measures the amount of glucose in your blood.',
-            category: 'blood',
-            code: 'GLUC001'
-          },
-          quantity: 1
-        }
-      ],
-      userEmail: 'patient2@example.com',
-      userName: 'Jane Smith',
-      totalAmount: 29.99,
-      paymentStatus: 'pending'
-    };
-    
-    // Add a third mock order with more data for variety
-    const mockOrder3: TestOrder = {
-      id: 'order-345678',
-      orderNumber: 'LAB7890',
-      orderDate: '2025-05-17T11:20:00Z',
-      status: 'scheduled',
-      tests: [
-        {
-          test: {
-            id: 'test-lipid',
-            name: 'Lipid Panel',
-            price: 59.99,
-            description: 'Measures cholesterol and triglycerides in your blood.',
-            category: 'blood',
-            code: 'LIPID001'
-          },
-          quantity: 1
-        },
-        {
-          test: {
-            id: 'test-thyroid',
-            name: 'Thyroid Panel',
-            price: 89.99,
-            description: 'Measures thyroid hormone levels in your blood.',
-            category: 'blood',
-            code: 'THYR001'
-          },
-          quantity: 1
-        }
-      ],
-      userEmail: 'patient3@example.com',
-      userName: 'Robert Johnson',
-      scheduledDate: new Date().toISOString().split('T')[0], // Today
-      scheduledTime: '14:00 PM',
-      location: 'Central Medical Lab',
-      totalAmount: 149.98,
-      paymentStatus: 'paid',
-      paymentMethod: 'insurance',
-      paymentDate: '2025-05-17',
-      transactionId: 'TXN789012'
-    };
+  const fetchOrders = async () => {
+      try {
+        const response = await fetch('/api/lab-orders');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch orders');
+      }
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch orders');
+    }
+  };
 
-    // Next.js safe way to access localStorage
-    const savedOrders = getLocalStorage('testOrders');
-    return savedOrders ? JSON.parse(savedOrders) : [mockOrder, mockOrder2, mockOrder3];
-  });
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   // Save orders to localStorage whenever they change (Next.js safe)
   useEffect(() => {

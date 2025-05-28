@@ -80,8 +80,7 @@ const MedicalRecordsPage = async (props: SearchParamsProps) => {
           <ProfileImage
             url={item?.patient?.img!}
             name={name}
-            bgColor={patient?.colorCode!}
-            textClassName="text-black"
+            className="size-10"
           />
           <div>
             <h3 className="uppercase">{name}</h3>

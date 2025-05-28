@@ -1,24 +1,22 @@
 "use client";
 
 import React, { useState } from 'react';
-import Navbar from '@/components/navbar/Navbar';
-import FooterSection from '@/components/sections/FooterSection';
-import ScrollToTop from '@/components/ScrollToTop';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Navbar from '../../../../../components/navbar/Navbar';
+import FooterSection from '../../../../../components/sections/FooterSection';
+import ScrollToTop from '../../../../../components/ScrollToTop';
+import { Button } from "../../../../../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../../../components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '../../../../../components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../../../components/ui/tabs';
 import { 
   Calendar, Clock, FileText, MapPin, Mail, Phone, Globe, Star, 
   User, Briefcase, GraduationCap, Clock8, Edit, ChevronRight, 
   Calendar as CalendarIcon, MessageSquare, Video
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import ProfileEditForm from '@/components/profile/ProfileEditForm';
-import { Progress } from '@/components/ui/progress';
-import EditProfileButton from '@/components/profile/EditProfileButton';
+import { Badge } from '../../../../../components/ui/badge';
+import { ScrollArea } from '../../../../../components/ui/scroll-area';
+import { Progress } from '../../../../../components/ui/progress';
+import EditProfileButton from '../../../../../components/profile/EditProfileButton';
 import { format } from 'date-fns';
 
 interface DoctorProfileClientProps {
@@ -135,9 +133,6 @@ export default function DoctorProfileClient({
               <div className="md:ml-auto">
                 <EditProfileButton 
                   profileData={data}
-                  dialogTitle="Edit Doctor Profile"
-                  dialogDescription="Update your profile information"
-                  allowBannerEdit={true}
                 />
               </div>
             </div>

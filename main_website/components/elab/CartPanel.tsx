@@ -65,53 +65,52 @@ const CartPanel: React.FC<CartPanelProps> = ({ onClose, fullPage = false }) => {
 
   return (
     <div className={`${fullPage ? 'container mx-auto px-4 py-8' : ''}`}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+        <CardHeader className="dark:bg-gray-900">
+          <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
             <ShoppingCart className="h-5 w-5" />
             Your Cart ({itemCount} {itemCount === 1 ? 'item' : 'items'})
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="dark:bg-gray-900">
           {items.map((item) => (
-            <div key={item.test.id} className="py-4 border-b last:border-0">
+            <div key={item.test.id} className="py-4 border-b last:border-0 border-gray-200 dark:border-gray-700">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h4 className="font-medium flex items-center">
+                  <h4 className="font-medium flex items-center text-gray-900 dark:text-gray-100">
                     {item.test.name}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <InfoIcon size={14} className="ml-1 text-gray-400 cursor-help" />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
+                        <TooltipContent className="max-w-xs dark:bg-gray-900 dark:text-gray-100">
                           <p>{item.test.description}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </h4>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm text-gray-500">Code: {item.test.code}</p>
-                    <Badge variant="outline" className="text-xs bg-blue-50">{item.test.category}</Badge>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">Code: {item.test.code}</p>
                   </div>
                 </div>
-                <p className="font-semibold">${(item.test.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">${(item.test.price * item.quantity).toFixed(2)}</p>
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2">
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    className="h-7 w-7" 
+                    className="h-7 w-7 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" 
                     onClick={() => updateQuantity(item.test.id, item.quantity - 1)}
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span>{item.quantity}</span>
+                  <span className="text-gray-900 dark:text-gray-100">{item.quantity}</span>
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    className="h-7 w-7" 
+                    className="h-7 w-7 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" 
                     onClick={() => updateQuantity(item.test.id, item.quantity + 1)}
                   >
                     <Plus className="h-3 w-3" />
@@ -120,7 +119,7 @@ const CartPanel: React.FC<CartPanelProps> = ({ onClose, fullPage = false }) => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 h-8"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900 p-1 h-8"
                   onClick={() => removeFromCart(item.test.id)}
                 >
                   <Trash className="h-4 w-4" />
@@ -131,29 +130,29 @@ const CartPanel: React.FC<CartPanelProps> = ({ onClose, fullPage = false }) => {
           
           <div className="mt-4 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Subtotal</span>
-              <span>${getSubtotal().toFixed(2)}</span>
+              <span className="text-gray-600 dark:text-gray-300">Subtotal</span>
+              <span className="text-gray-900 dark:text-gray-100">${getSubtotal().toFixed(2)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 flex items-center">
+              <span className="text-gray-600 dark:text-gray-300 flex items-center">
                 Draw Fee
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <InfoIcon size={14} className="ml-1 text-gray-400 cursor-help" />
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className="dark:bg-gray-900 dark:text-gray-100">
                       <p>One-time fee for collecting your samples</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </span>
-              <span>${DRAW_FEE.toFixed(2)}</span>
+              <span className="text-gray-900 dark:text-gray-100">${DRAW_FEE.toFixed(2)}</span>
             </div>
-            <Separator className="my-2" />
+            <Separator className="my-2 dark:bg-gray-700" />
             <div className="flex justify-between items-center font-bold">
-              <span>Total</span>
-              <span>${getTotal().toFixed(2)}</span>
+              <span className="text-gray-900 dark:text-gray-100">Total</span>
+              <span className="text-gray-900 dark:text-gray-100">${getTotal().toFixed(2)}</span>
             </div>
           </div>
 
@@ -188,22 +187,13 @@ const CartPanel: React.FC<CartPanelProps> = ({ onClose, fullPage = false }) => {
             </div>
           )}
         </CardContent>
-        <CardFooter className="flex justify-end gap-4">
-          {!fullPage && (
-            <Button
-              variant="outline"
-              className="px-7 py-3 text-base"
-              onClick={onClose}
-            >
-              Continue Shopping
-            </Button>
-          )}
+        <CardFooter className="flex justify-between gap-2 dark:bg-gray-900">
+          <Button variant="outline" className="w-full dark:border-gray-700 dark:text-gray-100 dark:bg-gray-900" onClick={() => router.push('/Elabs')}>Continue Shopping</Button>
           <Button 
-            className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow px-9 py-3 text-base ${fullPage ? 'ml-auto' : ''}`}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow dark:bg-blue-700 dark:hover:bg-blue-800"
             onClick={() => router.push('/checkout')}
           >
-            Checkout
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Checkout <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </CardFooter>
       </Card>

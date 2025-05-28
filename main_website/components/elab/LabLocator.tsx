@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Navigation, Map, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -120,126 +119,136 @@ export const LabLocator: React.FC = () => {
         <span>Find a Lab</span>
       </Button>
 
-      <motion.div 
+      <div 
         className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 ${isOpen ? 'block' : 'hidden'}`}
-        initial={{ opacity: 0 }}
-        animate={isOpen ? { opacity: 1 } : { opacity: 0 }}
         onClick={handleToggle}
-      />
+      >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isOpen ? { opacity: 1 } : { opacity: 0 }}
+        />
+      </div>
 
-      <motion.div
+      <div
         className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
-        initial={{ y: '100%' }}
-        animate={isOpen ? { y: 0 } : { y: '100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         style={{ maxHeight: '80vh' }}
       >
-        <div className="p-4 border-b border-gray-200">
-          <div className="mx-auto w-12 h-1 bg-gray-300 rounded-full mb-4" />
-          <h2 className="text-xl font-semibold text-center mb-4">Find a Lab Near You</h2>
-          
-          <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Enter your location or postal code"
-              className="pl-10 w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button 
-              type="submit" 
-              className="ml-2 absolute right-1 top-1"
-              size="sm"
-            >
-              Search
-            </Button>
-          </form>
-          
-          {userLocation && (
-            <div className="flex items-center gap-2 mt-4 text-sm text-blue-600">
-              <Navigation className="h-4 w-4" />
-              <span>Using: {userLocation}</span>
-            </div>
-          )}
-        </div>
-        
-        <div className="overflow-y-auto" style={{ maxHeight: 'calc(80vh - 150px)' }}>
-          {filteredLocations.map((location) => (
-            <motion.div 
-              key={location.id}
-              className="p-4 border-b border-gray-100 hover:bg-blue-50 transition-colors"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium text-gray-900">{location.name}</h3>
-                  <p className="text-sm text-gray-600">{location.address}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <MapPin className="h-3 w-3 text-blue-500" />
-                    <span className="text-xs text-blue-600">{location.distance} km away</span>
-                  </div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="text-xs border-blue-300 text-blue-600"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleScheduleVisit(location.id);
-                  }}
-                >
-                  Schedule
-                </Button>
+        <motion.div
+          initial={{ y: '100%' }}
+          animate={isOpen ? { y: 0 } : { y: '100%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
+          <div className="p-4 border-b border-gray-200">
+            <div className="mx-auto w-12 h-1 bg-gray-300 rounded-full mb-4" />
+            <h2 className="text-xl font-semibold text-center mb-4">Find a Lab Near You</h2>
+            
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Enter your location or postal code"
+                className="pl-10 w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Button 
+                type="submit" 
+                className="ml-2 absolute right-1 top-1"
+                size="sm"
+              >
+                Search
+              </Button>
+            </form>
+            
+            {userLocation && (
+              <div className="flex items-center gap-2 mt-4 text-sm text-blue-600">
+                <Navigation className="h-4 w-4" />
+                <span>Using: {userLocation}</span>
               </div>
-              
-              {activeLocation === location.id && (
+            )}
+          </div>
+          
+          <div className="overflow-y-auto" style={{ maxHeight: 'calc(80vh - 150px)' }}>
+            {filteredLocations.map((location) => (
+              <div
+                key={location.id}
+                className="p-4 border-b border-gray-100 hover:bg-blue-50 transition-colors"
+                onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
+              >
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="mt-3 pt-3 border-t border-gray-100"
                 >
-                  <div className="text-sm">
-                    <div className="mb-2">
-                      <span className="font-medium text-gray-700">Services:</span> 
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {location.services.map(service => (
-                          <span key={service} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
-                            {service}
-                          </span>
-                        ))}
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium text-gray-900">{location.name}</h3>
+                      <p className="text-sm text-gray-600">{location.address}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <MapPin className="h-3 w-3 text-blue-500" />
+                        <span className="text-xs text-blue-600">{location.distance} km away</span>
                       </div>
                     </div>
-                    <div className="mb-2">
-                      <span className="font-medium text-gray-700">Hours:</span> 
-                      <span className="text-gray-600 ml-2">{location.hours}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-700">Phone:</span>
-                      <span className="text-gray-600 ml-2">{location.phone}</span>
-                    </div>
-                    <div className="mt-3">
-                      <Button 
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleScheduleVisit(location.id);
-                        }}
-                      >
-                        Schedule a Visit
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs border-blue-300 text-blue-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleScheduleVisit(location.id);
+                      }}
+                    >
+                      Schedule
+                    </Button>
                   </div>
+                  
+                  {activeLocation === location.id && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <div className="text-sm">
+                          <div className="mb-2">
+                            <span className="font-medium text-gray-700">Services:</span> 
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {location.services.map(service => (
+                                <span key={service} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                                  {service}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="mb-2">
+                            <span className="font-medium text-gray-700">Hours:</span> 
+                            <span className="text-gray-600 ml-2">{location.hours}</span>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-700">Phone:</span>
+                            <span className="text-gray-600 ml-2">{location.phone}</span>
+                          </div>
+                          <div className="mt-3">
+                            <Button 
+                              className="w-full"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleScheduleVisit(location.id);
+                              }}
+                            >
+                              Schedule a Visit
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </div>
+                  )}
                 </motion.div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };

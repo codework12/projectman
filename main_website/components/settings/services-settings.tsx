@@ -1,3 +1,5 @@
+'use client';
+import { useEffect, useState } from 'react';
 import { getServices } from "@/utils/services/admin";
 import { Services } from "@prisma/client";
 import { AddService } from "../dialogs/add-service";
@@ -36,8 +38,29 @@ const columns = [
   // },
 ];
 
-export const ServiceSettings = async () => {
-  const { data } = await getServices();
+export const ServiceSettings = () => {
+  const [data, setData] = useState<Services[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    getServices()
+      .then(res => {
+        if (mounted) {
+          setData(res.data || []);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        if (mounted) {
+          setError('Failed to load services');
+          setLoading(false);
+        }
+      });
+    return () => { mounted = false; };
+  }, []);
 
   const renderRow = (item: Services) => (
     <tr
@@ -45,14 +68,12 @@ export const ServiceSettings = async () => {
       className="border-b border-border even:bg-muted/50 text-sm hover:bg-muted/70"
     >
       <td className="flex items-center gap-2 md:gap-4 py-4">{item?.id}</td>
-
       <td className="hidden md:table-cell">{item.service_name}</td>
       <td className="hidden md:table-cell capitalize">
         {item?.price?.toFixed(2)}
       </td>
-
       <td className="hidden xl:table-cell w-[50%]">
-        <p className="line-clamp-1">{item.description!}</p>
+        <p className="line-clamp-1">{item.description || ''}</p>
       </td>
       <td>
         {/* <div className="flex items-center gap-2">
@@ -76,19 +97,15 @@ export const ServiceSettings = async () => {
 
   return (
     <>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle className="capitalize">Services</CardTitle>
-          <CardDescription>
-            Perform all settings and other parameters of the system from this
-            section .
-          </CardDescription>
-        </div>
-        <AddService />
-      </CardHeader>
 
       <CardContent>
-        <Table columns={columns} renderRow={renderRow} data={data!} />
+        {loading ? (
+          <div className="py-8 text-center text-gray-500">Loading...</div>
+        ) : error ? (
+          <div className="py-8 text-center text-red-500">{error}</div>
+        ) : (
+          <Table columns={columns} renderRow={renderRow} data={data} />
+        )}
       </CardContent>
     </>
   );

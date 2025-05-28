@@ -1,108 +1,238 @@
-import React from "react";
-import { Users, ArrowRight, MessageSquare } from "lucide-react";
-import { getDoctors } from "@/utils/services/doctor";
-import { getPatientById } from "@/utils/services/patient";
-import { auth } from "@clerk/nextjs/server";
-import { ProfileImage } from "@/components/profile-image";
-import { BookAppointment } from "@/components/forms/book-appointment";
-import Link from "next/link";
+"use client";
+import React, { useState, useEffect } from 'react';
+import { motion, HTMLMotionProps, AnimatePresence } from 'framer-motion';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import PatientServiceList from '@/components/PatientServiceList';
+import PatientIntakeForm from '@/components/PatientIntakeForm';
+import PaymentProcess from '@/components/PaymentProcess';
+import { VideoIcon, MapPinIcon } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const PAGE_SIZE = 9;
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3
+    }
+  }
+};
 
-function getFilteredDoctors(doctors: any[], search: string) {
-  if (!search) return doctors;
-  return doctors.filter((doc) =>
-    doc.name?.toLowerCase().includes(search.toLowerCase())
-  );
-}
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300 } }
+};
 
-export default async function ProvidersPage({ searchParams }: { searchParams?: Promise<{ page?: string; search?: string }> }) {
-  const { userId } = await auth();
-  const { data: patient } = await getPatientById(userId!);
-  const resolvedParams = searchParams ? await searchParams : {};
-  const page = Number(resolvedParams.page || 1);
-  const search = resolvedParams.search || "";
-  const { data: doctors = [] } = await getDoctors();
+const fadeIn = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.8 } }
+};
 
-  if (!patient) return null;
+type MotionDivProps = HTMLMotionProps<"div"> & {
+  className?: string;
+};
 
-  const filteredDoctors = getFilteredDoctors(doctors, search);
-  const totalPages = Math.ceil(filteredDoctors.length / PAGE_SIZE);
-  const paginatedDoctors = filteredDoctors.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+const MotionDiv = motion.div as React.ComponentType<MotionDivProps>;
+
+const PatientServiceBooking = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialType = searchParams.get('type') === 'inPerson' ? 'inPerson' : 'virtual';
+  const [bookingStep, setBookingStep] = useState<'services' | 'intake' | 'payment'>('services');
+  const [serviceType, setServiceType] = useState<'virtual' | 'inPerson'>(initialType);
+  const [isLoading, setIsLoading] = useState(true);
+  const [serviceBooked, setServiceBooked] = useState(false);
+  const [intakeCompleted, setIntakeCompleted] = useState(false);
+  const [selectedDoctorName, setSelectedDoctorName] = useState<string | undefined>(undefined);
+  const [selectedServiceName, setSelectedServiceName] = useState<string | undefined>(undefined);
+  const [selectedServiceId, setSelectedServiceId] = useState<number | undefined>(undefined);
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | undefined>(undefined);
+  const [selectedServiceType, setSelectedServiceType] = useState<string | undefined>(undefined);
+  const [selectedServiceMode, setSelectedServiceMode] = useState<string | undefined>(undefined);
+  const [doctorsList, setDoctorsList] = useState<Array<{ id: string; name: string }>>([]);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
+    const handleBookingStepChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && customEvent.detail.step) {
+        setBookingStep(customEvent.detail.step);
+      }
+    };
+    document.addEventListener('bookingStepChange', handleBookingStepChange);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('bookingStepChange', handleBookingStepChange);
+    };
+  }, []);
+
+  const handleServiceTypeChange = (type: 'virtual' | 'inPerson') => {
+    setServiceType(type);
+    setBookingStep('services');
+    router.replace(`?type=${type}`);
+    // Reset booking state when changing service type
+    setServiceBooked(false);
+    setIntakeCompleted(false);
+  };
+
+  // Helper to extract doctors list from services
+  const handleServicesLoaded = (services: any[]) => {
+    // Extract unique doctors from services
+    const doctorMap = new Map();
+    services.forEach(service => {
+      if (service.doctorId && service.providerName) {
+        doctorMap.set(service.doctorId.toString(), { id: service.doctorId.toString(), name: service.providerName });
+      }
+    });
+    setDoctorsList(Array.from(doctorMap.values()));
+  };
 
   return (
-    <div className="w-full min-h-screen bg-white py-10 px-2 md:px-8 lg:px-16 xl:px-32">
-    
-      {/* Search Input */}
-      <form className="mb-8 flex justify-end" action="" method="get">
-        <input
-          type="text"
-          name="search"
-          defaultValue={search}
-          placeholder="Search by name..."
-          className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-200 text-gray-700"
-        />
-        {/* Keep page param if present */}
-        {page > 1 && <input type="hidden" name="page" value={page} />}
-        <button type="submit" className="ml-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Search</button>
-      </form>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
-        {paginatedDoctors.map((doc: any) => (
-          <div
-            key={doc.id}
-            className="bg-white border border-gray-200 rounded-2xl shadow-lg p-6 flex flex-col gap-4 relative hover:shadow-blue-200 transition group"
-          >
-            <div className="flex items-center gap-4">
-              <ProfileImage
-                url={doc.img}
-                name={doc.name}
-                className="w-16 h-16 text-xl border-2 border-blue-400 shadow"
-                textClassName="text-xl font-bold"
-                bgColor={doc.colorCode || "#2563eb"}
-              />
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-0.5">{doc.name}</h2>
-                    <div className="text-gray-500 text-sm">{doc.specialization || "Doctor"}</div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#f8fafc] to-[#e0f2fe] relative">
+      <main className="flex-grow container mx-auto px-2 md:px-8 py-8">
+        <AnimatePresence>
+          {isLoading ? (
+            <MotionDiv key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center justify-center min-h-[60vh]">
+              <MotionDiv animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-12 h-12 rounded-full border-4 border-[#10b981] border-t-transparent mx-auto" />
+            </MotionDiv>
+          ) : (
+            <>
+              <MotionDiv initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, type: "spring" }} className="mb-6">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-[#1e293b] mb-3 text-center tracking-tight">
+                  <span className="text-[#10b981] drop-shadow-md">Book</span> Healthcare Services
+                </h1>
+                <p className="text-[#64748b] text-center max-w-2xl mx-auto text-lg font-medium">
+                  Browse and book appointments with top healthcare professionals for virtual or in-person visits
+                </p>
+                {/* Only show the toggle if on the 'services' step */}
+                {bookingStep === 'services' && (
+                  <div className="flex justify-center mt-6">
+                    <button
+                      type="button"
+                      onClick={() => handleServiceTypeChange('virtual')}
+                      className={`px-8 py-3 text-base font-semibold rounded-l-xl transition-all duration-300 ${serviceType === 'virtual' ? 'bg-[#10b981] text-white shadow-lg scale-105' : 'bg-white text-[#10b981] border border-[#10b981]'} `}
+                    >
+                      <span className="flex items-center">
+                        <VideoIcon className="w-5 h-5 mr-2" />
+                        Virtual Services
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleServiceTypeChange('inPerson')}
+                      className={`px-8 py-3 text-base font-semibold rounded-r-xl transition-all duration-300 ${serviceType === 'inPerson' ? 'bg-[#10b981] text-white shadow-lg scale-105' : 'bg-white text-[#10b981] border border-[#10b981] -ml-px'} `}
+                    >
+                      <span className="flex items-center">
+                        <MapPinIcon className="w-5 h-5 mr-2" />
+                        In-Person Services
+                      </span>
+                    </button>
                   </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition" />
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-4">
-              <button className="flex items-center gap-2 px-5 py-2 rounded-xl border border-gray-300 text-gray-700 font-semibold bg-transparent hover:bg-gray-100 transition">
-                <MessageSquare className="w-4 h-4" /> Message
-              </button>
-              <BookAppointment data={patient} doctors={[doc]} />
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-12">
-          <Link
-            href={`?search=${encodeURIComponent(search)}&page=${page - 1}`}
-            className={`px-4 py-2 rounded-lg border font-semibold ${page <= 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"}`}
-            aria-disabled={page <= 1}
-            tabIndex={page <= 1 ? -1 : 0}
-          >
-            Previous
-          </Link>
-          <span className="text-gray-700 font-medium">
-            Page {page} of {totalPages}
-          </span>
-          <Link
-            href={`?search=${encodeURIComponent(search)}&page=${page + 1}`}
-            className={`px-4 py-2 rounded-lg border font-semibold ${page >= totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"}`}
-            aria-disabled={page >= totalPages}
-            tabIndex={page >= totalPages ? -1 : 0}
-          >
-            Next
-          </Link>
-        </div>
-      )}
+                )}
+              </MotionDiv>
+              <MotionDiv initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, type: "spring" }} className="max-w-5xl mx-auto">
+                <MotionDiv variants={item} className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#10b981]/10">
+                  <div className="sticky top-0 z-20 bg-white/90 px-2 md:px-8 pt-6 pb-2 rounded-t-3xl shadow-md">
+                    <div className="w-full flex items-center justify-between bg-[#f4fdfa] rounded-full border border-[#10b981]/30 shadow-sm p-1 mb-6 overflow-x-auto">
+                      <button
+                        className={`flex-1 py-3 px-6 rounded-full font-bold text-base transition-all duration-300
+                          ${bookingStep === 'services'
+                            ? 'bg-[#10b981] text-white shadow'
+                            : 'bg-transparent text-[#10b981] hover:bg-[#e0f2fe]'}
+                          ${bookingStep !== 'services' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => {
+                          if (bookingStep === 'services') {
+                            setBookingStep('services');
+                          } else {
+                            alert('You cannot go back from this step.');
+                          }
+                        }}
+                        disabled={bookingStep !== 'services'}
+                      >
+                        Select Service
+                      </button>
+                      <button
+                        className={`flex-1 py-3 px-6 rounded-full font-bold text-base transition-all duration-300
+                          ${bookingStep === 'intake'
+                            ? 'bg-[#10b981] text-white shadow'
+                            : 'bg-transparent text-[#10b981] hover:bg-[#e0f2fe]'}
+                          ${!serviceBooked || bookingStep === 'services' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => {
+                          if (serviceBooked && bookingStep !== 'services') {
+                            setBookingStep('intake');
+                          } else {
+                            alert('Please book an appointment first.');
+                          }
+                        }}
+                        disabled={!serviceBooked || bookingStep === 'services'}
+                      >
+                        Patient Intake
+                      </button>
+                      <button
+                        className={`flex-1 py-3 px-6 rounded-full font-bold text-base transition-all duration-300
+                          ${bookingStep === 'payment'
+                            ? 'bg-[#10b981] text-white shadow'
+                            : 'bg-transparent text-[#10b981] hover:bg-[#e0f2fe]'}
+                          ${!intakeCompleted || bookingStep === 'services' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => {
+                          if (intakeCompleted && bookingStep !== 'services') {
+                            setBookingStep('payment');
+                          } else {
+                            alert('Please complete the intake form first.');
+                          }
+                        }}
+                        disabled={!intakeCompleted || bookingStep === 'services'}
+                      >
+                        Payment
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-0 md:p-6 min-h-[500px] bg-gradient-to-br from-white to-[#f0fdf4]">
+                    {bookingStep === 'services' && (
+                      <PatientServiceList
+                        key={serviceType}
+                        serviceType={serviceType}
+                        onBook={(doctorId?: string, doctorName?: string, serviceName?: string, serviceId?: number, services?: any[], type?: string, mode?: string) => {
+                          console.log('onBook services:', services);
+                          setServiceBooked(true);
+                          setSelectedDoctorId(doctorId);
+                          setSelectedDoctorName(doctorName);
+                          setSelectedServiceName(serviceName);
+                          setSelectedServiceId(serviceId);
+                          setSelectedServiceType(type);
+                          setSelectedServiceMode(mode);
+                          if (services) handleServicesLoaded(services);
+                          setBookingStep('intake');
+                        }}
+                      />
+                    )}
+                    {bookingStep === 'intake' && (
+                      <PatientIntakeForm
+                        onComplete={() => setIntakeCompleted(true)}
+                        doctorName={selectedDoctorName}
+                        serviceName={selectedServiceName}
+                        doctorsList={doctorsList}
+                        selectedServiceId={selectedServiceId}
+                        doctorId={selectedDoctorId}
+                        type={selectedServiceType}
+                        mode={selectedServiceMode}
+                      />
+                    )}
+                    {bookingStep === 'payment' && <PaymentProcess />}
+                  </div>
+                </MotionDiv>
+              </MotionDiv>
+            </>
+          )}
+        </AnimatePresence>
+      </main>
+      <MotionDiv initial={{ opacity: 0 }} animate={{ opacity: 0.12 }} className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#10b981]/30 via-[#e0f2fe]/40 to-transparent" />
     </div>
   );
-} 
+};
+
+export default PatientServiceBooking;

@@ -75,6 +75,21 @@ export const AppointmentSchema = z.object({
     note: z.string().optional(),
   });
 
+// Duplicate of AppointmentSchema for Patient Intake Form, with additional intake fields
+export const PatientIntakeSchema = z.object({
+  appointment_date: z.string().min(1, "Appointment date is required"),
+  time: z.string().min(1, "Appointment time is required"),
+  chiefComplaint: z.string().min(1, "Chief complaint is required"),
+  allergies: z.string().optional(),
+  currentMedications: z.string().optional(),
+  pastMedicalConditions: z.string().optional(),
+  bloodPressure: z.string().optional(),
+  temperature: z.string().optional(),
+  pharmacyName: z.string().optional(),
+  pharmacyAddress: z.string().optional(),
+  pharmacyPhone: z.string().optional(),
+});
+
   
 export const DoctorSchema = z.object({
     name: z
@@ -176,4 +191,22 @@ export const DoctorSchema = z.object({
     service_name: z.string({ message: "Service name is required" }),
     price: z.string({ message: "Service price is required" }),
     description: z.string({ message: "Service description is required" }),
+    isOnline: z.boolean().optional(),
+    hospitalName: z.string().optional(),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    zipCode: z.string().optional(),
+    status: z.string().optional(),
+    mode: z.string().optional(),
+    category: z.string().optional(),
+    insurance_accepted: z.array(z.string()).optional(),
+  }).refine((data) => {
+    if (data.isOnline === false) {
+      return !!(data.hospitalName && data.address && data.city && data.state && data.zipCode);
+    }
+    return true;
+  }, {
+    message: "All location fields are required for in-person services",
+    path: ["hospitalName"]
   });

@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { getUniqueCategories } from '@/data/labTests';
+import { getUniqueCategories } from '../data/labTests';
 import TestCategoryCard from './TestCategoryCard';
 import { Badge } from '@/components/ui/badge';
 
@@ -37,44 +36,46 @@ const TestCategories: React.FC = () => {
           </motion.div>
         </div>
         
-        <motion.div 
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ staggerChildren: 0.1 }}
-          viewport={{ once: true }}
-        >
-          {categories.map((category, index) => (
-            <motion.div
-              key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              viewport={{ once: true }}
-              onClick={() => {
-                const testCatalogElement = document.getElementById('test-catalog');
-                if (testCatalogElement) {
-                  testCatalogElement.scrollIntoView({ behavior: 'smooth' });
-                  // Ideally would set the category filter
-                  const categorySelector = document.querySelector(`select option[value="${category}"]`) as HTMLOptionElement;
-                  if (categorySelector) {
-                    categorySelector.selected = true;
-                    // Trigger change event
-                    const event = new Event('change', { bubbles: true });
-                    categorySelector.parentElement?.dispatchEvent(event);
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ staggerChildren: 0.1 }}
+            viewport={{ once: true }}
+          >
+            {categories.map((category, index) => (
+              <div
+                key={category}
+                onClick={() => {
+                  const testCatalogElement = document.getElementById('test-catalog');
+                  if (testCatalogElement) {
+                    testCatalogElement.scrollIntoView({ behavior: 'smooth' });
+                    const categorySelector = document.querySelector(`select option[value="${category}"]`) as HTMLOptionElement;
+                    if (categorySelector) {
+                      categorySelector.selected = true;
+                      const event = new Event('change', { bubbles: true });
+                      categorySelector.parentElement?.dispatchEvent(event);
+                    }
                   }
-                }
-              }}
-            >
-              <TestCategoryCard 
-                name={category.charAt(0).toUpperCase() + category.slice(1)} 
-                description={`Browse ${category} tests`}
-                iconType={categoryIcons[category] || 'microscope'}
-                colorClass={index % 2 === 0 ? "bg-blue-50" : "bg-elab-soft-green"}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                >
+                  <TestCategoryCard 
+                    name={category.charAt(0).toUpperCase() + category.slice(1)} 
+                    description={`Browse ${category} tests`}
+                    iconType={categoryIcons[category] || 'microscope'}
+                    colorClass={index % 2 === 0 ? "bg-blue-50" : "bg-elab-soft-green"}
+                  />
+                </motion.div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );

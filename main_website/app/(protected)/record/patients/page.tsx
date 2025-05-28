@@ -91,8 +91,7 @@ const PatientList = async (props: SearchParamsProps) => {
           <ProfileImage
             url={item?.img!}
             name={name}
-            bgColor={item?.colorCode!}
-            textClassName="text-black"
+            className="size-10"
           />
           <div>
             <h3 className="uppercase">{name}</h3>

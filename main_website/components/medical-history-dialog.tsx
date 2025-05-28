@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FileText } from "lucide-react";
@@ -10,7 +12,8 @@ interface DataProps {
   doctor_id: string | number;
   label: React.ReactNode;
 }
-export const MedicalHistoryDialog = async ({
+
+export const MedicalHistoryDialog = ({
   id,
   patientId,
   doctor_id,

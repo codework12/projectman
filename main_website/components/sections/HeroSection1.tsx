@@ -192,144 +192,137 @@ const HealthGame = () => {
     }
     
     return (
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto overflow-hidden border border-primary/20"
-      >
-        <motion.div 
-          className="text-center"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.3
-              }
-            }
-          }}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto overflow-hidden border border-primary/20">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
         >
           <motion.div 
-            className="mb-4"
+            initial="hidden"
+            animate="visible"
             variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.3
+                }
+              }
             }}
           >
+            <div className="mb-4">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20
+                }}
+              >
+                {emoji}
+              </motion.div>
+            </div>
+            
+            <h3 className="text-xl font-bold mb-2">
+              <motion.h3
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                Quiz Complete!
+              </motion.h3>
+            </h3>
+            
             <motion.div
-              className="text-6xl mx-auto"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 260,
-                damping: 20
+              variants={{
+                hidden: { y: 20, opacity: 0 },
+                visible: { y: 0, opacity: 1 }
               }}
             >
-              {emoji}
+              <p className="text-lg font-semibold mb-1">Your Score: {score}/{questions.length}</p>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                <div className="bg-primary h-2.5 rounded-full">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${percentage}%` }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                  />
+                </div>
+              </div>
+              <p className="mb-4">{message}</p>
             </motion.div>
-          </motion.div>
-          
-          <motion.h3 
-            className="text-xl font-bold mb-2"
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
-            }}
-          >
-            Quiz Complete!
-          </motion.h3>
-          
-          <motion.div
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
-            }}
-          >
-            <p className="text-lg font-semibold mb-1">Your Score: {score}/{questions.length}</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-              <motion.div 
-                className="bg-primary h-2.5 rounded-full" 
-                initial={{ width: 0 }}
-                animate={{ width: `${percentage}%` }}
-                transition={{ duration: 1, delay: 0.5 }}
-              ></motion.div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <motion.div
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: { y: 0, opacity: 1 }
+                }}
+              >
+                <Button 
+                  variant="outline" 
+                  onClick={startGame}
+                  className="flex-1 hover:bg-primary/10"
+                >
+                  Play Again
+                </Button>
+                <Button 
+                  className="flex-1 gradient-bg" 
+                  asChild
+                >
+                  <Link href="/app/patient">
+                    Go to Dashboard <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </motion.div>
             </div>
-            <p className="mb-4">{message}</p>
-          </motion.div>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-3 justify-center"
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: { y: 0, opacity: 1 }
-            }}
-          >
-            <Button 
-              variant="outline" 
-              onClick={startGame}
-              className="flex-1 hover:bg-primary/10"
-            >
-              Play Again
-            </Button>
-            <Button 
-              className="flex-1 gradient-bg" 
-              asChild
-            >
-              <Link href="/app/patient">
-                Go to Dashboard <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            </Button>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     );
   }
 
   // Game welcome screen
   if (!gameStarted) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto border border-primary/20"
-      >
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto border border-primary/20">
         <div className="text-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="mb-4"
-          >
-            <motion.div 
-              className="h-16 w-16 rounded-full gradient-bg mx-auto flex items-center justify-center"
-              whileHover={{ rotate: 10, scale: 1.05 }}
+          <div className="mb-4">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 260, damping: 20 }}
             >
-              <Heart className="h-8 w-8 text-white" />
+              <div className="h-16 w-16 rounded-full gradient-bg mx-auto flex items-center justify-center">
+                <motion.div whileHover={{ rotate: 10, scale: 1.05 }}>
+                  <Heart className="h-8 w-8 text-white" />
+                </motion.div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
           
-          <motion.h3 
-            className="text-2xl font-bold mb-2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Health IQ Challenge
-          </motion.h3>
+          <div className="text-2xl font-bold mb-2">
+            <motion.h3 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              Health IQ Challenge
+            </motion.h3>
+          </div>
           
-          <motion.p 
-            className="mb-6 text-gray-600 dark:text-gray-300"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            Test your knowledge of health facts with this quick quiz! Learn while having fun.
-          </motion.p>
+          <div className="mb-6 text-gray-600 dark:text-gray-300">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              Test your knowledge of health facts with this quick quiz! Learn while having fun.
+            </motion.p>
+          </div>
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -347,167 +340,179 @@ const HealthGame = () => {
             </MotionButton>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   // Active game screen
   return (
     <AnimatePresence mode="wait">
-      <motion.div
-        key={currentQuestion}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -50 }}
-        transition={{ duration: 0.4 }}
-        className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto border border-primary/20"
-      >
-        {/* Progress and timer */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-sm font-medium">
-            Question {currentQuestion + 1}/{questions.length}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg mx-auto border border-primary/20">
+        <motion.div
+          key={currentQuestion}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.4 }}
+        >
+          {/* Progress and timer */}
+          <div className="flex justify-between items-center mb-4">
+            <div className="text-sm font-medium">
+              Question {currentQuestion + 1}/{questions.length}
+            </div>
+            <div className="flex items-center">
+              <div className={`text-sm font-medium ${timeLeft < 5 ? 'text-red-500' : ''}`}>
+                <motion.div 
+                  animate={{ 
+                    scale: timeLeft <= 5 ? [1, 1.1, 1] : 1,
+                  }}
+                  transition={{ repeat: timeLeft <= 5 ? Infinity : 0, duration: 0.5 }}
+                >
+                  {timeLeft}s
+                </motion.div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center">
-            <motion.div 
-              className={`text-sm font-medium ${timeLeft < 5 ? 'text-red-500' : ''}`}
-              animate={{ 
-                scale: timeLeft <= 5 ? [1, 1.1, 1] : 1,
-              }}
-              transition={{ repeat: timeLeft <= 5 ? Infinity : 0, duration: 0.5 }}
-            >
-              {timeLeft}s
-            </motion.div>
+          
+          {/* Progress bar */}
+          <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 overflow-hidden">
+            <div className="bg-primary h-1.5">
+              <motion.div 
+                initial={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
+                animate={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4 overflow-hidden">
-          <motion.div 
-            className="bg-primary h-1.5"
-            initial={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-            animate={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-            transition={{ duration: 0.3 }}
-          ></motion.div>
-        </div>
-        
-        {/* Question and emoji */}
-        <div className="mb-4 text-center">
-          <motion.div
-            className="text-4xl mb-2"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 260,
-              damping: 20
-            }}
-          >
-            {questions[currentQuestion].image}
-          </motion.div>
-          <motion.h3 
-            className="text-lg font-semibold"
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            {questions[currentQuestion].question}
-          </motion.h3>
-        </div>
-        
-        {/* Answer options */}
-        <div className="space-y-2">
-          {questions[currentQuestion].options.map((option, index) => (
-            <motion.button
-              key={index}
-              onClick={() => selectedAnswer === null && handleAnswerSelect(index)}
-              disabled={selectedAnswer !== null}
-              className={`w-full p-3 rounded-lg border text-left transition-colors ${
-                selectedAnswer === null
-                  ? "border-gray-300 hover:border-primary hover:bg-primary/5"
-                  : selectedAnswer === index
-                    ? index === questions[currentQuestion].correctAnswer
-                      ? "border-green-500 bg-green-50 dark:bg-green-900/30"
-                      : "border-red-500 bg-red-50 dark:bg-red-900/30"
-                    : index === questions[currentQuestion].correctAnswer && selectedAnswer !== null
-                      ? "border-green-500 bg-green-50 dark:bg-green-900/30"
-                      : "border-gray-300 opacity-70"
-              }`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 + 0.2 }}
-              whileHover={selectedAnswer === null ? { scale: 1.01, backgroundColor: "rgba(46, 125, 50, 0.1)" } : {}}
-              whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
-            >
-              <div className="flex items-center">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-2 ${
+          
+          {/* Question and emoji */}
+          <div className="mb-4 text-center">
+            <div className="text-4xl mb-2">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20
+                }}
+              >
+                {questions[currentQuestion].image}
+              </motion.div>
+            </div>
+            <div className="text-lg font-semibold">
+              <motion.h3 
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                {questions[currentQuestion].question}
+              </motion.h3>
+            </div>
+          </div>
+          
+          {/* Answer options */}
+          <div className="space-y-2">
+            {questions[currentQuestion].options.map((option, index) => (
+              <button
+                key={index}
+                onClick={() => selectedAnswer === null && handleAnswerSelect(index)}
+                disabled={selectedAnswer !== null}
+                className={`w-full p-3 rounded-lg border text-left transition-colors ${
                   selectedAnswer === null
-                    ? "bg-primary/10 text-primary"
+                    ? "border-gray-300 hover:border-primary hover:bg-primary/5"
                     : selectedAnswer === index
                       ? index === questions[currentQuestion].correctAnswer
-                        ? "bg-green-500 text-white"
-                        : "bg-red-500 text-white"
+                        ? "border-green-500 bg-green-50 dark:bg-green-900/30"
+                        : "border-red-500 bg-red-50 dark:bg-red-900/30"
                       : index === questions[currentQuestion].correctAnswer && selectedAnswer !== null
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-600"
-                }`}>
-                  {String.fromCharCode(65 + index)}
-                </div>
-                <span className="flex-1">{option}</span>
-                {selectedAnswer !== null && index === questions[currentQuestion].correctAnswer && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                  >
-                    <BadgeCheck className="h-5 w-5 text-green-500 ml-2" />
-                  </motion.div>
-                )}
+                        ? "border-green-500 bg-green-50 dark:bg-green-900/30"
+                        : "border-gray-300 opacity-70"
+                }`}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 + 0.2 }}
+                  whileHover={selectedAnswer === null ? { scale: 1.01, backgroundColor: "rgba(46, 125, 50, 0.1)" } : {}}
+                  whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
+                >
+                  <div className="flex items-center">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-2 ${
+                      selectedAnswer === null
+                        ? "bg-primary/10 text-primary"
+                        : selectedAnswer === index
+                          ? index === questions[currentQuestion].correctAnswer
+                            ? "bg-green-500 text-white"
+                            : "bg-red-500 text-white"
+                          : index === questions[currentQuestion].correctAnswer && selectedAnswer !== null
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-200 text-gray-600"
+                    }`}>
+                      {String.fromCharCode(65 + index)}
+                    </div>
+                    <span className="flex-1">{option}</span>
+                    {selectedAnswer !== null && index === questions[currentQuestion].correctAnswer && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                      >
+                        <BadgeCheck className="h-5 w-5 text-green-500 ml-2" />
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              </button>
+            ))}
+          </div>
+          
+          {/* Feedback message */}
+          <AnimatePresence>
+            {showFeedback && (
+              <div className="mt-4 p-3 bg-primary/10 rounded-lg text-sm">
+                <motion.div
+                  initial={{ opacity: 0, y: 10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: 'auto' }}
+                  exit={{ opacity: 0, y: 10, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {feedbackMessage}
+                </motion.div>
               </div>
-            </motion.button>
-          ))}
-        </div>
-        
-        {/* Feedback message */}
-        <AnimatePresence>
-          {showFeedback && (
+            )}
+          </AnimatePresence>
+          
+          {/* Timer indicator */}
+          <div className="w-full bg-gray-100 h-1 mt-4 rounded-full overflow-hidden">
             <motion.div
-              initial={{ opacity: 0, y: 10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: 'auto' }}
-              exit={{ opacity: 0, y: 10, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-4 p-3 bg-primary/10 rounded-lg text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
             >
-              {feedbackMessage}
+              <div className={`h-full ${timeLeft < 5 ? 'bg-red-500' : 'bg-primary'}`}> 
+                <motion.div
+                  initial={{ width: '100%' }}
+                  animate={{ width: `${(timeLeft / 15) * 100}%` }}
+                  transition={{ duration: 1, ease: "linear" }}
+                />
+              </div>
             </motion.div>
+          </div>
+          
+          {/* Streak indicator */}
+          {streak > 0 && (
+            <div className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <motion.div
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              >
+                <Trophy className="h-3 w-3 mr-1" /> {streak} streak!
+              </motion.div>
+            </div>
           )}
-        </AnimatePresence>
-        
-        {/* Timer indicator */}
-        <motion.div 
-          className="w-full bg-gray-100 h-1 mt-4 rounded-full overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <motion.div 
-            className={`h-full ${timeLeft < 5 ? 'bg-red-500' : 'bg-primary'}`}
-            initial={{ width: '100%' }}
-            animate={{ width: `${(timeLeft / 15) * 100}%` }}
-            transition={{ duration: 1, ease: "linear" }}
-          ></motion.div>
         </motion.div>
-        
-        {/* Streak indicator */}
-        {streak > 0 && (
-          <motion.div 
-            className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full flex items-center"
-            initial={{ scale: 0, rotate: -20 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          >
-            <Trophy className="h-3 w-3 mr-1" /> {streak} streak!
-          </motion.div>
-        )}
-      </motion.div>
+      </div>
     </AnimatePresence>
   );
 };

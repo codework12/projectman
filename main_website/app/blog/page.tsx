@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/navbar/Navbar';
-import FooterSection from '@/components/sections/FooterSection';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import Navbar from "../../components/navbar/Navbar";
+import FooterSection from "../../components/sections/FooterSection";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { useToast } from "../../hooks/use-toast";
 import { BookOpen, Calendar, Clock, Eye, ArrowUpRight, Tag, ChevronRight } from 'lucide-react';
 
 // Blog post type definition
@@ -136,7 +136,7 @@ const Blog = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {visiblePosts.map(post => (
                   <Card key={post.id} className="overflow-hidden hover-lift group">
-                    <div className="relative h-48 overflow-hidden aspect-[16/9]">
+                    <div className="relative overflow-hidden aspect-[16/9]">
                       <img 
                         src={post.image} 
                         alt={post.title}

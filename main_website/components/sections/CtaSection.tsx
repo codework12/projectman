@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, PhoneCall } from 'lucide-react';
+import Link from "next/link";
 
 const CtaSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -63,13 +64,16 @@ const CtaSection: React.FC = () => {
                   Join Now
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
                   className="bg-white text-green-600 border-green-500 hover:bg-green-50 hover:text-green-700 group dark:bg-transparent dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-green-600"
                 >
-                  <PhoneCall className="mr-2 h-5 w-5" />
-                  Contact Support
+                  <Link href="/contact">
+                    <PhoneCall className="mr-2 h-5 w-5" />
+                    Contact Support
+                  </Link>
                 </Button>
               </div>
             </div>

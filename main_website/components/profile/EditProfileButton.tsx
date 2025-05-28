@@ -20,7 +20,7 @@ const EditProfileButton: React.FC<EditProfileButtonProps> = ({
   const router = useRouter();
   
   const handleEditClick = () => {
-    router.push(`/patient/registration?id=${profileData.id}`);
+    router.push('/doctor-registration?edit=true');
   };
 
   return (

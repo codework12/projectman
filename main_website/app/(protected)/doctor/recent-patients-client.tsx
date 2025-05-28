@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 import Link from "next/link";
-import { ProfileImage } from "@/components/profile-image";
+import { ProfileImage } from "../../../components/profile-image";
+import { User, Calendar, Phone, Mail } from 'lucide-react';
 
 interface Patient {
   id: string;
@@ -14,57 +15,63 @@ interface Patient {
 }
 
 interface RecentPatientsClientProps {
-  recentPatients: Patient[];
+  patients: Patient[];
 }
 
-export function RecentPatientsClient({ recentPatients }: RecentPatientsClientProps) {
+const MotionDiv = motion.div as React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<HTMLDivElement> & React.HTMLAttributes<HTMLDivElement>>;
+
+const RecentPatientsClient = ({ patients }: RecentPatientsClientProps) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
+    <MotionDiv
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 80, damping: 18 }}
-      className="bg-white rounded-2xl shadow-xl border border-blue-100 p-4 mb-8"
+      className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-lg border border-[#10b981]/10 dark:border-[#10b981]/20 p-4 mb-8"
     >
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Recent Patients</h2>
+        <h2 className="text-lg font-bold text-[#1e293b] dark:text-white">Recent Patients</h2>
         <Link
-          href="/record/patients/all"
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500 text-blue-600 font-semibold text-sm bg-white hover:bg-blue-50 hover:text-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+          href="/doctor/patients"
+          className="text-sm text-[#2563eb] dark:text-[#38bdf8] hover:text-[#174ea6] dark:hover:text-[#5eead4] transition-colors"
         >
-          View More
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          View All
         </Link>
       </div>
-      <ul className="divide-y divide-gray-100">
-        {recentPatients.slice(0, 4).map((p, idx) => {
-          const gender = (p.gender ?? '').toLowerCase();
-          let genderClass = 'bg-gray-100 text-gray-500';
-          if (gender === 'male') genderClass = 'bg-blue-50 text-blue-600';
-          else if (gender === 'female') genderClass = 'bg-pink-50 text-pink-600';
-          return (
-            <motion.li
-              key={p.id}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * idx, type: "spring", stiffness: 100, damping: 18 }}
-              className="flex items-center gap-3 py-3"
-            >
-              <ProfileImage
-                url={p.img ?? ""}
-                name={`${p.first_name ?? ""} ${p.last_name ?? ""}`}
-                className="w-11 h-11 bg-blue-100 border-2 border-white shadow"
-                bgColor={p.colorCode ?? ""}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 truncate">{p.first_name} {p.last_name}</div>
-                <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium mt-0.5 ${genderClass}`}>{p.gender ?? 'Other'}</span>
-              </div>
-            </motion.li>
-          );
-        })}
-      </ul>
-    </motion.div>
+      <div className="space-y-4">
+        {patients.map((patient) => (
+          <MotionDiv
+            key={patient.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="bg-white dark:bg-[#134e4a] rounded-xl p-4 border border-[#e5e7eb] dark:border-[#2563eb]/20 transition-all duration-200"
+            whileHover={{ scale: 1.02, boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <User className="w-5 h-5 text-[#64748b] dark:text-gray-300" />
+              <span className="font-medium text-[#1e293b] dark:text-white">{`${patient.first_name} ${patient.last_name}`}</span>
+            </div>
+            <div className="flex items-center gap-1 text-sm">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium 
+                ${patient.gender?.toLowerCase() === 'male' 
+                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                  : patient.gender?.toLowerCase() === 'female'
+                  ? 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+                  : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                }`}>
+                {patient.gender || 'Other'}
+              </span>
+            </div>
+            <ProfileImage
+              url={patient.img!}
+              name={`${patient.first_name} ${patient.last_name}`}
+              className="size-10"
+            />
+          </MotionDiv>
+        ))}
+      </div>
+    </MotionDiv>
   );
-} 
+};
+
+export default RecentPatientsClient; 

@@ -60,8 +60,6 @@ const PatientProfile = async (props: ParamsProps) => {
             url={data?.img!}
             name={data?.first_name + " " + data?.last_name}
             className="h-28 w-28 mb-4 border-4 border-primary/30 shadow-lg"
-            bgColor={data?.colorCode!}
-            textClassName="text-4xl"
           />
           <h1 className="text-2xl font-extrabold text-foreground font-sans tracking-tight mb-1 text-center">
             {data?.first_name + " " + data?.last_name}

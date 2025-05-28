@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { LabTest } from '@/models/LabTest';
+import { LabTest } from '../models/LabTest';
 import { Check, X } from 'lucide-react';
 
 interface TestComparisonModalProps {

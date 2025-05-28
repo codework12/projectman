@@ -11,5 +11,6 @@ type RouteAccessProps = {
     "/record/doctors(.*)": ["admin", "doctor"],
     "/record/patients": ["admin", "doctor"],
     "/patient/registrations": ["patient"],
+    "/record/Patient-Appointments(.*)": ["patient", "doctor"],
   };
   

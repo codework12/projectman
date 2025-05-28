@@ -76,78 +76,71 @@ const PatientDashboard = async () => {
   ];
 
   return (
-    <div className="py-2 px-1 sm:py-4 sm:px-3 flex flex-col xl:flex-row gap-2 sm:gap-4 xl:gap-8 min-h-screen bg-background">
-      {/* LEFT */}
-      <div className="w-full xl:w-[69%] flex flex-col gap-2 sm:gap-4 xl:gap-8">
-        {/* Welcome + Stats */}
-        <div className="relative bg-card rounded-xl shadow-sm border border-border p-2 sm:p-4 md:p-6 overflow-hidden animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full mb-4 sm:mb-8">
-          {/* Subtle accent bar */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-muted to-muted rounded-t-xl z-10" />
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-2">
-            {/* Left: Icon and Welcome */}
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-muted to-muted-foreground flex items-center justify-center shadow-sm border border-border">
-                {/* Professional waving hand icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-7 h-7 md:w-8 md:h-8">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 8.5V6.75A2.25 2.25 0 019.25 4.5h.5A2.25 2.25 0 0112 6.75V8.5m0 0v2.25m0-2.25h2.25A2.25 2.25 0 0116.5 10.75v.5A2.25 2.25 0 0114.25 13.5H12m0 0v2.25m0-2.25H9.75A2.25 2.25 0 017.5 11.25v-.5A2.25 2.25 0 019.75 8.5H12z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-lg sm:text-2xl md:text-3xl xl:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
-                  Welcome, {data?.first_name || user?.firstName}
-            </h1>
-              </div>
-            </div>
-            {/* Right: Buttons */}
-            <div className="flex items-center gap-2 md:gap-3">
-              <Button
-                size="sm"
-                className="rounded-full border border-border bg-card text-foreground font-semibold px-3 md:px-5 py-1.5 md:py-2 flex items-center gap-2 shadow-sm hover:bg-muted transition text-xs sm:text-sm md:text-base"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 md:w-5 md:h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10m-12 8a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v12z" />
-                </svg>
-                {new Date().getFullYear()}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-full border-border text-foreground font-semibold px-3 md:px-5 py-1.5 md:py-2 flex items-center gap-2 hover:bg-muted transition text-xs sm:text-sm md:text-base"
-              >
-                <Link href="/patient/self" className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 md:w-5 md:h-5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.25a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.25z" />
+    <div className="py-2 px-1 sm:py-4 sm:px-3 min-h-screen bg-background">
+      <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4 xl:gap-8">
+        {/* LEFT COLUMN */}
+        <div className="flex flex-col gap-4">
+          {/* Welcome + Stats */}
+          <div className="relative bg-card rounded-xl shadow-sm border border-border p-4 overflow-hidden animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-muted to-muted rounded-t-xl z-10" />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-2">
+              <div className="flex items-center gap-2 md:gap-4">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-muted to-muted-foreground flex items-center justify-center shadow-sm border border-border">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-8 h-8">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 8.5V6.75A2.25 2.25 0 019.25 4.5h.5A2.25 2.25 0 0112 6.75V8.5m0 0v2.25m0-2.25h2.25A2.25 2.25 0 0116.5 10.75v.5A2.25 2.25 0 0114.25 13.5H12m0 0v2.25m0-2.25H9.75A2.25 2.25 0 017.5 11.25v-.5A2.25 2.25 0 019.75 8.5H12z" />
                   </svg>
-                  View Profile
-                </Link>
-              </Button>
+                </div>
+                <div>
+                  <h1 className="text-2xl xl:text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+                    Welcome, {data?.first_name || user?.firstName}
+                  </h1>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button size="sm" className="rounded-full border border-border bg-card text-foreground font-semibold px-5 py-2 flex items-center gap-2 shadow-sm hover:bg-muted transition text-base">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10m-12 8a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v12z" />
+                  </svg>
+                  {new Date().getFullYear()}
+                </Button>
+                <Button size="sm" variant="outline" className="rounded-full border-border text-foreground font-semibold px-5 py-2 flex items-center gap-2 hover:bg-muted transition text-base">
+                  <Link href="/patient/self" className="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a7.5 7.5 0 0115 0v.25a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.25z" />
+                    </svg>
+                    View Profile
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            <div className="w-full flex flex-wrap gap-5">
+              {cardData?.map((el, id) => (
+                <StatCard key={id} {...el} link="#" />
+              ))}
             </div>
           </div>
-          <div className="w-full flex flex-wrap gap-2 md:gap-5">
-            {cardData?.map((el, id) => (
-              <StatCard key={id} {...el} link="#" />
-            ))}
+          {/* Chart Section */}
+          <div className="h-[400px] md:h-[500px] animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full">
+            <AppointmentChart data={monthlyData} />
+          </div>
+          {/* Recent Appointments Section */}
+          <div className="bg-card rounded-xl p-4 mt-8 animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full">
+            <RecentAppointments data={last5Records} />
           </div>
         </div>
-        {/* Chart Section */}
-        <div className="h-[300px] sm:h-[400px] md:h-[500px] animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full">
-          <AppointmentChart data={monthlyData} />
-        </div>
-        {/* Recent Appointments Section */}
-        <div className="bg-card rounded-xl p-2 sm:p-4 mt-4 sm:mt-8 animate-fadeInUp transition-all duration-300 hover:scale-[1.02] w-full">
-          <RecentAppointments data={last5Records} />
-        </div>
-      </div>
-      {/* RIGHT */}
-      <div className="w-full xl:w-[30%] flex flex-col gap-2 sm:gap-4 xl:gap-8 mt-4 xl:mt-0">
-        <div className="w-full h-[300px] sm:h-[400px] md:h-[450px] mb-0 animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
-          <StatSummary data={appointmentCounts} total={totalAppointments} />
-        </div>
-        <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
-        <AvailableDoctors data={availableDoctor as AvailableDoctorProps} />
-        </div>
-        <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
-        <PatientRatingContainer /> 
+        {/* RIGHT COLUMN */}
+        <div className="flex flex-col gap-4 items-stretch">
+          <div className="w-full h-full flex flex-col gap-4">
+            <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
+              <StatSummary data={appointmentCounts} total={totalAppointments} />
+            </div>
+            <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
+              <AvailableDoctors data={availableDoctor as AvailableDoctorProps} />
+            </div>
+            <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
+              <PatientRatingContainer />
+            </div>
+          </div>
         </div>
       </div>
     </div>

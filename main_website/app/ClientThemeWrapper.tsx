@@ -1,7 +1,6 @@
-
 "use client";
 import { useEffect } from "react";
-import { useTheme } from "@/components/ThemeProvider";
+import { ThemeProvider, useTheme } from "../components/ThemeProvider";
 import { themeColors } from "./theme";
 import { ThemeToggle } from "@/components/ThemeToggle";
 

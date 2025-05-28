@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ProfileImage } from "@/components/profile-image";
+import { ProfileImage } from "../../../../../components/profile-image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -42,10 +42,9 @@ export default function AllPatientsClient({ patients }: AllPatientsClientProps) 
           return (
             <li key={p.id} className="flex items-center gap-4 py-4 px-6">
               <ProfileImage
-                url={p.img ?? ""}
-                name={`${p.first_name ?? ""} ${p.last_name ?? ""}`}
-                className="w-12 h-12 bg-blue-100 border-2 border-white shadow"
-                bgColor={p.colorCode ?? ""}
+                url={p.img!}
+                name={`${p.first_name} ${p.last_name}`}
+                className="size-10"
               />
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-gray-900 truncate">{p.first_name} {p.last_name}</div>

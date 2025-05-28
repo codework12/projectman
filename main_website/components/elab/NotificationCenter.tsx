@@ -137,70 +137,71 @@ export const NotificationCenter: React.FC = () => {
       
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 z-50"
-          >
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="font-semibold text-gray-700">Notifications</h3>
-              {unreadCount > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={markAllAsRead} 
-                  className="text-xs text-blue-600 hover:text-blue-800"
-                >
-                  Mark all as read
-                </Button>
-              )}
-            </div>
-            
-            <div className="max-h-80 overflow-y-auto">
-              {notifications.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
-                  No notifications
-                </div>
-              ) : (
-                notifications.map((notif) => (
-                  <div 
-                    key={notif.id} 
-                    className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors flex gap-3 ${!notif.read ? 'bg-blue-50' : ''}`}
+          <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 z-50">
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 className="font-semibold text-gray-700">Notifications</h3>
+                {unreadCount > 0 && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={markAllAsRead} 
+                    className="text-xs text-blue-600 hover:text-blue-800"
                   >
-                    <div className="mt-1">
-                      {getNotificationIcon(notif.type)}
-                    </div>
-                    <div className="flex-grow">
-                      <div className="flex justify-between">
-                        <h4 className={`text-sm font-medium ${!notif.read ? 'text-blue-800' : 'text-gray-700'}`}>
-                          {notif.title}
-                        </h4>
-                        <button onClick={() => deleteNotification(notif.id)} className="text-gray-400 hover:text-gray-600">
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">{notif.message}</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-xs text-gray-500">{formatDate(notif.date)}</span>
-                        {!notif.read && (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => markAsRead(notif.id)} 
-                            className="text-xs text-blue-600 hover:text-blue-800 h-6 px-2"
-                          >
-                            Mark as read
-                          </Button>
-                        )}
-                      </div>
-                    </div>
+                    Mark all as read
+                  </Button>
+                )}
+              </div>
+              
+              <div className="max-h-80 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    No notifications
                   </div>
-                ))
-              )}
-            </div>
-          </motion.div>
+                ) : (
+                  notifications.map((notif) => (
+                    <div 
+                      key={notif.id} 
+                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors flex gap-3 ${!notif.read ? 'bg-blue-50' : ''}`}
+                    >
+                      <div className="mt-1">
+                        {getNotificationIcon(notif.type)}
+                      </div>
+                      <div className="flex-grow">
+                        <div className="flex justify-between">
+                          <h4 className={`text-sm font-medium ${!notif.read ? 'text-blue-800' : 'text-gray-700'}`}>
+                            {notif.title}
+                          </h4>
+                          <button onClick={() => deleteNotification(notif.id)} className="text-gray-400 hover:text-gray-600">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{notif.message}</p>
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="text-xs text-gray-500">{formatDate(notif.date)}</span>
+                          {!notif.read && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => markAsRead(notif.id)} 
+                              className="text-xs text-blue-600 hover:text-blue-800 h-6 px-2"
+                            >
+                              Mark as read
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

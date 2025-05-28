@@ -34,67 +34,68 @@ const TopRatedTests: React.FC = () => {
         </div>
         
         <div className="overflow-x-auto pb-4">
-          <MotionDiv 
-            className="flex space-x-4 min-w-max"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, staggerChildren: 0.1 }}
-            viewport={{ once: true }}
-          >
-            {topRatedTests.map((test, index) => (
-              <MotionDiv
-                key={test.id}
-                className="w-72 flex-shrink-0"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="h-full hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge className="bg-blue-500">{test.category}</Badge>
-                      <Badge variant="outline" className="bg-white">
-                        {test.code}
-                      </Badge>
-                    </div>
-                    
-                    <h3 className="font-bold text-lg mb-2">{test.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{test.description}</p>
-                    
-                    <div className="flex items-center mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={`${
-                            i < Math.floor(test.rating)
-                              ? "text-yellow-400 fill-yellow-400"
-                              : i < test.rating
-                              ? "text-yellow-400 fill-yellow-400 opacity-50"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                      <span className="ml-1 text-sm text-gray-600">({(test.rating).toFixed(1)})</span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center mt-auto">
-                      <span className="font-bold text-lg">${test.price.toFixed(2)}</span>
-                      <Button 
-                        size="sm" 
-                        className="bg-elab-medical-blue"
-                        onClick={() => addToCart(test)}
-                      >
-                        <Plus size={16} className="mr-1" />
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </MotionDiv>
-            ))}
-          </MotionDiv>
+          <div className="flex space-x-4 min-w-max">
+            <MotionDiv 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, staggerChildren: 0.1 }}
+              viewport={{ once: true }}
+            >
+              {topRatedTests.map((test, index) => (
+                <div key={test.id} className="w-72 flex-shrink-0">
+                  <MotionDiv
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="h-full hover:shadow-lg transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <Badge className="bg-blue-500">{test.category}</Badge>
+                          <Badge variant="outline" className="bg-white">
+                            {test.code}
+                          </Badge>
+                        </div>
+                        
+                        <h3 className="font-bold text-lg mb-2">{test.name}</h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{test.description}</p>
+                        
+                        <div className="flex items-center mb-4">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={16}
+                              className={`${
+                                i < Math.floor(test.rating)
+                                  ? "text-yellow-400 fill-yellow-400"
+                                  : i < test.rating
+                                  ? "text-yellow-400 fill-yellow-400 opacity-50"
+                                  : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                          <span className="ml-1 text-sm text-gray-600">({(test.rating).toFixed(1)})</span>
+                        </div>
+                        
+                        <div className="flex justify-between items-center mt-auto">
+                          <span className="font-bold text-lg">${test.price.toFixed(2)}</span>
+                          <Button 
+                            size="sm" 
+                            className="bg-elab-medical-blue"
+                            onClick={() => addToCart(test)}
+                          >
+                            <Plus size={16} className="mr-1" />
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </MotionDiv>
+                </div>
+              ))}
+            </MotionDiv>
+          </div>
         </div>
       </div>
     </section>

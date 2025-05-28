@@ -9,60 +9,62 @@ interface AnimatedSectionProps {
   className?: string;
 }
 
-export function AnimatedSection({ children, delay = 0, className = "" }: AnimatedSectionProps) {
+export const AnimatedSection = ({ children, delay = 0, className = "" }: AnimatedSectionProps) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <div className={className}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay }}
+        style={{ display: 'block' }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
-}
+};
 
 export function AnimatedHero({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <div className={className}>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ display: 'block' }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 }
 
-export function AnimatedHeroImage({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function AnimatedText({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <div className={className}>
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ display: 'block' }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 }
 
-export function AnimatedFloating({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function AnimatedImage({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div
-      animate={{
-        y: [0, -10, 0],
-      }}
-      transition={{
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
+    <div className={className}>
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        style={{ display: 'block' }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 } 

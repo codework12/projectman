@@ -5,11 +5,13 @@ import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowRight, Check, Heart 
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const FooterSection: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubscribing, setIsSubscribing] = useState(false);
   const { toast } = useToast();
+  const pathname = usePathname();
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +29,17 @@ const FooterSection: React.FC = () => {
         variant: "default",
       });
     }, 1500);
+  };
+
+  const handleScrollToSection = (sectionId: string) => {
+    if (pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
@@ -69,11 +82,25 @@ const FooterSection: React.FC = () => {
               <span className="absolute -bottom-1 left-0 w-12 h-0.5 bg-primary"></span>
             </h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center">Home</a></li>
-              <li><a href="#features" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Features</a></li>
-              <li><a href="#testimonials" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Testimonials</a></li>
-              <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Blog</a></li>
+              <li><a href="/" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors flex items-center">Home</a></li>
+              <li><a 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleScrollToSection('features');
+                }}
+                href="/#features" 
+                className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer"
+              >Features</a></li>
+              <li><a 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleScrollToSection('testimonials');
+                }}
+                href="/#testimonials" 
+                className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors cursor-pointer"
+              >Testimonials</a></li>
+              <li><a href="/about_us" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">About Us</a></li>
+              <li><a href="/blog" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Blog</a></li>
             </ul>
           </div>
 
@@ -87,7 +114,7 @@ const FooterSection: React.FC = () => {
               <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Terms of Service</a></li>
               <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Cookie Policy</a></li>
-              <li><a href="#" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contact Us</a></li>
+              <li><a href="/contact" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors">Contact Us</a></li>
             </ul>
           </div>
 

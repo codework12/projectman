@@ -1,7 +1,7 @@
 "use client";
 
-import { PatientRatingContainer } from "@/components/patient-rating-container";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { PatientRatingContainer } from "../../../../components/patient-rating-container";
 
 interface RatingsSectionProps {
   patientId: string;

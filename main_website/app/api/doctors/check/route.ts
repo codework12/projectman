@@ -20,23 +20,30 @@ export async function GET(request: Request) {
       },
       select: {
         id: true,
-        type: true
+        type: true,
+        availability_status: true
       }
     });
 
     if (!doctor) {
-      return NextResponse.json({ exists: false });
+      return NextResponse.json({ 
+        exists: false,
+        status: null
+      });
     }
 
     return NextResponse.json({
       exists: true,
-      status: doctor.type === 'FULL' ? 'approved' : 'pending'
+      status: doctor.availability_status || (doctor.type === 'FULL' ? 'approved' : 'pending')
     });
 
   } catch (error) {
     console.error('Error checking doctor:', error);
     return NextResponse.json(
-      { error: 'Failed to check doctor status' },
+      { 
+        error: 'Failed to check doctor status',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

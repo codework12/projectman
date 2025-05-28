@@ -19,7 +19,9 @@ const publicRoutes = [
   "/contact",
   "/sign-up/sso-callback",
   "/doctor-registration",
-  "/doctor-registration/pending"
+  "/doctor-registration/pending",
+  "/api/doctors/check",
+  "/api/doctors/register"
 ];
 
 // Define auth routes that should redirect to dashboard if user is already signed in

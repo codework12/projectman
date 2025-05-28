@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { File } from 'lucide-react';
 
 interface ChatMessageProps {
   content: string;
@@ -11,6 +11,11 @@ interface ChatMessageProps {
   senderName: string;
   senderAvatar?: string;
   isRead?: boolean;
+  attachment?: {
+    type: 'image' | 'file';
+    name: string;
+    url: string;
+  };
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -20,6 +25,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   senderName,
   senderAvatar,
   isRead = false,
+  attachment
 }) => {
   const isUser = sender === 'user';
   
@@ -53,6 +59,24 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             : "bg-muted/80 dark:bg-muted text-foreground rounded-tl-none"
         )}>
           {content}
+          {attachment && (
+            <div className="mt-2">
+              {attachment.type === 'image' ? (
+                <div className="relative rounded-md overflow-hidden">
+                  <img 
+                    src={attachment.url} 
+                    alt={attachment.name} 
+                    className="max-w-full h-auto object-cover rounded-md"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 bg-background/50 rounded-md p-2">
+                  <File className="h-4 w-4" />
+                  <span className="text-xs truncate">{attachment.name}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         
         <div className="flex items-center mt-1 text-xs text-muted-foreground space-x-1">

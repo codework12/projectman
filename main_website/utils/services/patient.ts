@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import { getMonth, format, startOfYear, endOfMonth, isToday } from "date-fns";
+import { getMonth, format, startOfYear, endOfYear, isToday } from "date-fns";
 import { daysOfWeek } from "..";
 
 type AppointmentStatus = "PENDING" | "SCHEDULED" | "COMPLETED" | "CANCELLED";
@@ -15,34 +15,31 @@ function isValidStatus(status: string): status is AppointmentStatus {
 
 const initializeMonthlyData = () => {
   const this_year = new Date().getFullYear();
-
-  const months = Array.from(
-    { length: getMonth(new Date()) + 1 },
-    (_, index) => ({
-      name: format(new Date(this_year, index), "MMM"),
-      appointment: 0,
-      completed: 0,
-    })
-  );
-  return months;
+  return Array.from({ length: 12 }, (_, index) => ({
+    name: format(new Date(this_year, index), "MMM"),
+    appointment: 0,
+    completed: 0,
+    date: format(new Date(this_year, index), "yyyy-MM-dd")
+  }));
 };
 
 export const processAppointments = async (appointments: Appointment[]) => {
   const monthlyData = initializeMonthlyData();
+  const this_year = new Date().getFullYear();
+  const startDate = startOfYear(new Date());
+  const endDate = endOfYear(new Date());
 
   const appointmentCounts = appointments.reduce<
     Record<AppointmentStatus, number>
   >(
     (acc, appointment) => {
       const status = appointment.status;
-
       const appointmentDate = appointment?.appointment_date;
-
       const monthIndex = getMonth(appointmentDate);
 
       if (
-        appointmentDate >= startOfYear(new Date()) &&
-        appointmentDate <= endOfMonth(new Date())
+        appointmentDate >= startDate &&
+        appointmentDate <= endDate
       ) {
         monthlyData[monthIndex].appointment += 1;
 

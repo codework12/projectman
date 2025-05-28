@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 import { Shield, Users, Clock, Award } from 'lucide-react';
 
 interface CounterProps {
@@ -48,26 +47,37 @@ const Counter = ({ end, duration = 2, suffix = "", prefix = "" }: CounterProps) 
   );
 };
 
+interface StatCardProps {
+  icon: React.ElementType;
+  value: number;
+  label: string;
+  suffix?: string;
+  delay?: number;
+}
+
 const StatCard = ({ 
   icon: Icon, 
   value, 
   label, 
   suffix = "", 
   delay = 0 
-}: { 
-  icon: React.ElementType; 
-  value: number; 
-  label: string;
-  suffix?: string;
-  delay?: number;
-}) => {
+}: StatCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
       viewport={{ once: true }}
-      className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg flex flex-col items-center text-center hover-card"
+      style={{
+        backgroundColor: 'var(--background)',
+        borderRadius: '0.75rem',
+        padding: '1.5rem',
+        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center'
+      }}
     >
       <div className="mb-4 p-3 bg-primary/10 rounded-full">
         <Icon className="h-8 w-8 text-primary" />

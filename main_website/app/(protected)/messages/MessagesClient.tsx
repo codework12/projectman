@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from "../../../components/ui/button";
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { MessageCircle, Search, Phone, Video, Smile, Send } from 'lucide-react';
-import { NoDataFound } from '@/components/no-data-found';
+import { NoDataFound } from "../../../components/no-data-found";
 
 interface Doctor {
   id: string;

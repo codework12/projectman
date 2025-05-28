@@ -28,8 +28,6 @@ const DoctorProfile = async (props: { params: { id: string } }) => {
               url={data?.img!}
               name={data?.name}
               className="size-20"
-              bgColor={data?.colorCode!}
-              textClassName="text-4xl text-black"
             />
 
             <div className="w-2/3 flex flex-col justify-between gap-x-4">

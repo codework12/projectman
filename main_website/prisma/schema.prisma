@@ -21,6 +21,7 @@ model Patient {
   emergency_contact_name     String
   emergency_contact_number   String
   relation                   String
+  marital_status             String
   blood_group                String?
   allergies                  String?
   medical_conditions         String?
@@ -43,23 +44,26 @@ model Patient {
   medical                    MedicalRecords[]
   payments                   Payment[]
   ratings                    Rating[]
+  patientIntakes             PatientIntake[]
+  orders                     Order[]
+  reviews                    Review[]
 }
 
 model Doctor {
-  id                  String        @id
-  email               String        @unique
+  id                  String          @id
+  email               String          @unique
   name                String
   specialization      String
-  license_number      String        @unique
+  license_number      String          @unique
   phone               String
   address             String
   department          String?
   img                 String?
   colorCode           String?
   availability_status String?
-  type                JOBTYPE       @default(FULL)
-  created_at          DateTime      @default(now())
-  updated_at          DateTime      @updatedAt
+  type                JOBTYPE         @default(FULL)
+  created_at          DateTime        @default(now())
+  updated_at          DateTime        @updatedAt
   appointments        Appointment[]
   diagnosis           Diagnosis[]
   ratings             Rating[]
@@ -69,6 +73,8 @@ model Doctor {
   zip                 String
   npi_number          String
   years_in_practice   String?
+  patientIntakes      PatientIntake[]
+  services            Services[]
 }
 
 model WorkingDays {
@@ -92,13 +98,14 @@ model Appointment {
   type             String
   note             String?
   reason           String?
-  mode             String           
+  mode             String
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   doctor           Doctor            @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
   patient          Patient           @relation(fields: [patient_id], references: [id], onDelete: Cascade)
   medical          MedicalRecords[]
   bills            Payment?
+  patientIntake    PatientIntake?
 }
 
 model Payment {
@@ -133,20 +140,6 @@ model PatientBills {
   updated_at   DateTime @updatedAt
   payment      Payment  @relation(fields: [bill_id], references: [id], onDelete: Cascade)
   service      Services @relation(fields: [service_id], references: [id])
-}
-
-model LabTest {
-  id             Int            @id @default(autoincrement())
-  record_id      Int
-  test_date      DateTime
-  result         String
-  status         String
-  notes          String?
-  service_id     Int            @unique
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  medical_record MedicalRecords @relation(fields: [record_id], references: [id], onDelete: Cascade)
-  services       Services       @relation(fields: [service_id], references: [id])
 }
 
 model MedicalRecords {
@@ -224,14 +217,153 @@ model Rating {
 }
 
 model Services {
-  id           Int            @id @default(autoincrement())
-  service_name String
-  description  String
-  price        Float
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  labtest      LabTest?
-  bills        PatientBills[]
+  id             Int                   @id @default(autoincrement())
+  service_name   String
+  description    String
+  price          Float
+  created_at     DateTime              @default(now())
+  updated_at     DateTime              @updatedAt
+  bills          PatientBills[]
+  availability   ServiceAvailability[]
+  insurance      InsuranceAccepted[]
+  status         String                @default("active")
+  mode           String                @default("virtual")
+  category       String                @default("General")
+  hospitalName   String?
+  address        String?
+  city           String?
+  state          String?
+  zipCode        String?
+  providerName   String
+  doctor_id      String
+  doctor         Doctor                @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  patientIntakes PatientIntake[]
+}
+
+model LabTest {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  created_at  DateTime         @default(now())
+  updated_at  DateTime         @updatedAt
+  orderItems  OrderItem[]
+  testResults TestResult[]
+  medical     MedicalRecords[]
+  reviews     Review[]
+}
+
+model Order {
+  id                Int           @id @default(autoincrement())
+  orderNumber       String        @unique
+  status            OrderStatus
+  totalAmount       Float
+  paymentStatus     PaymentStatus
+  paymentMethod     PaymentMethod
+  paymentDate       DateTime
+  transactionId     String?
+  patientId         String
+  orderDate         DateTime      @default(now())
+  patientFirstName  String
+  patientLastName   String
+  patientEmail      String
+  patientPhone      String
+  patientDob        DateTime
+  patientGender     String
+  patientAddress    String
+  patientCity       String
+  patientState      String
+  patientZipCode    String
+  orderItems        OrderItem[]
+  results           TestResult[]
+  patient           Patient       @relation(fields: [patientId], references: [id])
+}
+
+model OrderItem {
+  id              Int      @id @default(autoincrement())
+  orderId         Int
+  testId          Int
+  quantity        Int
+  price           Float
+  testName        String
+  testCode        String?
+  testDescription String?
+  testPrice       Float
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  test            LabTest  @relation(fields: [testId], references: [id])
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+}
+
+model TestResult {
+  id             Int        @id @default(autoincrement())
+  orderId        Int
+  testId         Int
+  resultValue    String?
+  normalRange    String?
+  unit           String?
+  status         TestStatus @default(SCHEDULED)
+  reviewed       Boolean    @default(false)
+  fileAttachment Json?
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  order          Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  test           LabTest    @relation(fields: [testId], references: [id])
+}
+
+model ServiceAvailability {
+  id         Int      @id @default(autoincrement())
+  service    Services @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  service_id Int
+  day        String
+  from       String
+  to         String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model InsuranceAccepted {
+  id         Int      @id @default(autoincrement())
+  service    Services @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  service_id Int
+  provider   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model PatientIntake {
+  id                    Int      @id @default(autoincrement())
+  appointment_id        Int      @unique
+  patient_id            String
+  doctor_id             String
+  service_id            Int
+  chiefComplaint        String
+  allergies             String?
+  currentMedications    String?
+  pastMedicalConditions String?
+  bloodPressure         String?
+  temperature           String?
+  pharmacyName          String?
+  pharmacyAddress       String?
+  pharmacyPhone         String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  patient     Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor      Doctor      @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+  service     Services    @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  patientId  String
+  testId     Int
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  test       LabTest  @relation(fields: [testId], references: [id])
 }
 
 enum Role {
@@ -274,4 +406,14 @@ enum PaymentStatus {
   PAID
   UNPAID
   PART
+}
+
+enum OrderStatus {
+  SCHEDULED
+  COMPLETED
+}
+
+enum TestStatus {
+  SCHEDULED
+  COMPLETED
 }

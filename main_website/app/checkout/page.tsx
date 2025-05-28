@@ -12,7 +12,8 @@ import OrderSummary from './OrderSummary';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, X, User, FileText } from 'lucide-react';
 
-type PatientInfo = {
+export type PatientInfo = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -32,6 +33,7 @@ const Checkout = () => {
   const { toast } = useToast();
   
   const [patientInfo, setPatientInfo] = useState({
+    id: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -58,10 +60,35 @@ const Checkout = () => {
   };
   
   // Handle successful payment
-  const handlePaymentSuccess = (paymentId: string) => {
+  const handlePaymentSuccess = async (paymentId: string) => {
     try {
+      setIsPaymentProcessing(true);
+      
       // Create a new order with self-pay payment
       const orderNumber = `LAB-${Math.floor(100000 + Math.random() * 900000)}`;
+      
+      // Store order in database
+      const response = await fetch('/api/lab-orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          patientInfo: patientInfo,
+          tests: items,
+          totalAmount: getTotal(),
+          paymentMethod: 'credit_card',
+          transactionId: paymentId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const order = await response.json();
+      
+      // Add order to local context
       const newOrder = addOrder({
         orderNumber,
         orderDate: new Date().toISOString(),
@@ -92,6 +119,7 @@ const Checkout = () => {
         title: "Error",
         description: "There was a problem processing your payment.",
       });
+    } finally {
       setIsPaymentProcessing(false);
     }
   };

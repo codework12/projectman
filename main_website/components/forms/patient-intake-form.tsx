@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { UploadCloud } from "lucide-react";
+import { SheetContent } from "@/components/ui/sheet";
 
 const intakeSchema = z.object({
   chiefComplaint: z.string().min(2, "Required"),
@@ -53,7 +54,7 @@ export const PatientIntakeForm = ({ onNext }: { onNext: (data: IntakeFormValues)
         </h2>
         <p className="text-gray-500 mb-4 text-base">Please fill out this form to help us provide you with tailored and effective healthcare services.</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         <div>
           <label className="font-semibold text-gray-700">Reason for today's visit</label>
           <input {...register("chiefComplaint")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 text-base" placeholder="Chief Complaint" />
@@ -79,25 +80,19 @@ export const PatientIntakeForm = ({ onNext }: { onNext: (data: IntakeFormValues)
           <label className="font-semibold text-gray-700">Last Temp & Date</label>
           <input {...register("temp")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 text-base" placeholder="e.g. 98.6°F, 2023-05-01" />
         </div>
-        <div>
-          <label className="font-semibold text-gray-700">Preferred Pharmacy</label>
-          <input {...register("pharmacyName")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 text-base" placeholder="Pharmacy Name" />
-          <input {...register("pharmacyAddress")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 mt-2 text-base" placeholder="Pharmacy Address" />
-          <input {...register("pharmacyPhone")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 mt-2 text-base" placeholder="Pharmacy Phone" />
-        </div>
-        <div>
-          <label className="font-semibold text-gray-700">Do you have insurance?</label>
-          <div className="flex gap-4 mt-1">
-            <label className="flex items-center gap-2">
-              <input type="radio" value="yes" {...register("insurance")} /> Yes
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="radio" value="no" {...register("insurance")} /> No
-            </label>
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="font-semibold text-gray-700">Pharmacy Name</label>
+            <input {...register("pharmacyName")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 text-base" placeholder="Pharmacy Name" />
           </div>
-          {insurance === "yes" && (
-            <input {...register("insuranceId")} className="w-full mt-2 rounded-lg border border-gray-200 px-3 py-2 text-base" placeholder="Member ID or Group ID" />
-          )}
+          <div>
+            <label className="font-semibold text-gray-700">Pharmacy Address</label>
+            <input {...register("pharmacyAddress")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 mt-2 text-base" placeholder="Pharmacy Address" />
+          </div>
+          <div>
+            <label className="font-semibold text-gray-700">Pharmacy Phone</label>
+            <input {...register("pharmacyPhone")} className="w-full mt-1 rounded-lg border border-gray-200 px-3 py-2 mt-2 text-base" placeholder="Pharmacy Phone" />
+          </div>
         </div>
       </div>
       <div>

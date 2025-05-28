@@ -13,17 +13,15 @@ export async function getDoctors() {
     return { success: false, message: "Internal Server Error", status: 500 };
   }
 }
-export async function getDoctorDashboardStats() {
+export async function getDoctorDashboardStats(userId: string) {
   try {
-    const { userId } = await auth();
-
     const todayDate = new Date().getDay();
     const today = daysOfWeek[todayDate];
 
     const [totalPatient, appointments, doctors] = await Promise.all([
       db.patient.count(),
       db.appointment.findMany({
-        where: { doctor_id: userId! },
+        where: { doctor_id: userId },
         include: {
           patient: {
             select: {
@@ -68,16 +66,16 @@ export async function getDoctorDashboardStats() {
 
     // Get all appointments for this doctor
     const allAppointments = await db.appointment.findMany({
-      where: { doctor_id: userId! },
+      where: { doctor_id: userId },
       select: { status: true }
     });
 
     // Count appointments by status
     const appointmentCounts = {
-      PENDING: allAppointments.filter(a => a.status === 'PENDING').length,
-      SCHEDULED: allAppointments.filter(a => a.status === 'SCHEDULED').length,
-      COMPLETED: allAppointments.filter(a => a.status === 'COMPLETED').length,
-      CANCELLED: allAppointments.filter(a => a.status === 'CANCELLED').length,
+      PENDING: allAppointments.filter((a: any) => a.status === 'PENDING').length,
+      SCHEDULED: allAppointments.filter((a: any) => a.status === 'SCHEDULED').length,
+      COMPLETED: allAppointments.filter((a: any) => a.status === 'COMPLETED').length,
+      CANCELLED: allAppointments.filter((a: any) => a.status === 'CANCELLED').length,
     };
 
     // Calculate total active appointments (SCHEDULED + COMPLETED)
@@ -156,7 +154,7 @@ export async function getRatingById(id: string) {
     });
 
     const totalRatings = data?.length;
-    const sumRatings = data?.reduce((sum, el) => sum + el.rating, 0);
+    const sumRatings = data?.reduce((sum: any, el: any) => sum + el.rating, 0);
 
     const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
     const formattedRatings = (Math.round(averageRating * 10) / 10).toFixed(1);
@@ -247,11 +245,11 @@ export async function getAllDoctors({
 
     // Get Clerk users for the paginated doctors
     const clerkUsers = await client.users.getUserList({ 
-      userId: doctors.map(d => d.id) 
+      userId: doctors.map((d: any) => d.id) 
     });
 
-    const formattedDoctors = doctors.map(doctor => {
-      const clerkUser = clerkUsers.data.find(u => u.id === doctor.id);
+    const formattedDoctors = doctors.map((doctor: any) => {
+      const clerkUser = clerkUsers.data.find((u: any) => u.id === doctor.id);
       return {
         id: doctor.id,
         fullName: doctor.name,
@@ -261,7 +259,7 @@ export async function getAllDoctors({
         submittedAt: doctor.created_at ? new Date(doctor.created_at).toISOString() : new Date().toISOString(),
         status: clerkUser?.publicMetadata?.status || 'pending',
         workingDays: doctor.working_days || [],
-        totalAppointments: doctor.appointments?.length || 0
+        totalAppointments: (doctor.appointments as any[])?.length || 0
       };
     });
 
@@ -308,6 +306,14 @@ export async function createNewDoctor(data: any, did: string) {
     });
     const client = await clerkClient();
     let user;
+    // Split name for Clerk
+    let firstName = doctorData.name;
+    let lastName = '';
+    if (doctorData.name && doctorData.name.includes(' ')) {
+      const [first, ...rest] = doctorData.name.trim().split(' ');
+      firstName = first;
+      lastName = rest.join(' ');
+    }
     // If userId is not provided, try to find user by email
     if (!doctorData.userId) {
       const foundUsers = await client.users.getUserList({ emailAddress: [doctorData.email] });
@@ -319,8 +325,8 @@ export async function createNewDoctor(data: any, did: string) {
       // Update existing Clerk user
       console.log("Updating existing Clerk user:", doctorData.userId);
       user = await client.users.updateUser(doctorData.userId, {
-        firstName: doctorData.name,
-        lastName: doctorData.name,
+        firstName,
+        lastName,
         publicMetadata: { role: "doctor", status: "pending" },
       });
       doctor_id = user.id;
@@ -330,8 +336,8 @@ export async function createNewDoctor(data: any, did: string) {
       user = await client.users.createUser({
         emailAddress: [doctorData.email],
         password,
-        firstName: doctorData.name,
-        lastName: doctorData.name,
+        firstName,
+        lastName,
         publicMetadata: { role: "doctor", status: "pending" },
       });
       doctor_id = user.id;
@@ -372,5 +378,59 @@ export async function createNewDoctor(data: any, did: string) {
       }
     }
     return { success: false, error: true, msg: error?.message || (error.errors && JSON.stringify(error.errors)) };
+  }
+}
+
+export async function updateDoctor(data: any, id: string) {
+  try {
+    // Prepare doctor data for DB (only allowed fields)
+    const doctorDbData: any = {
+      email: data.email,
+      name: data.name,
+      specialization: data.specialization,
+      license_number: data.license_number,
+      phone: data.phone,
+      address: data.address,
+      department: data.department,
+      type: data.type,
+      city: data.city,
+      state: data.state,
+      zip: data.zip,
+      npi_number: data.npi_number,
+      years_in_practice: data.years_in_practice,
+      // add any other fields your model expects
+    };
+    // Update working_days if provided
+    if (data.working_days) {
+      doctorDbData.working_days = {
+        deleteMany: {},
+        create: data.working_days,
+      };
+    }
+    await db.doctor.update({
+      where: { id },
+      data: doctorDbData,
+    });
+    // Update Clerk user name
+    const client = await clerkClient();
+    let firstName = data.name;
+    let lastName = '';
+    if (data.name && data.name.includes(' ')) {
+      const [first, ...rest] = data.name.trim().split(' ');
+      firstName = first;
+      lastName = rest.join(' ');
+    }
+    try {
+      await client.users.updateUser(id, {
+        firstName,
+        lastName,
+      });
+    } catch (clerkError) {
+      console.error('Failed to update Clerk user name:', clerkError);
+    }
+    return { success: true, error: false, msg: "Doctor updated successfully" };
+  } catch (error: any) {
+    console.error("Doctor update error:", error);
+    return { success: false, error: true, msg: error?.message };
   }
 }

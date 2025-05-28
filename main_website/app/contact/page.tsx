@@ -1,7 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence, HTMLMotionProps } from 'framer-motion';
 import Navbar from '@/components/navbar/Navbar';
 import FooterSection from '@/components/sections/FooterSection';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -13,23 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { Phone, Mail, MapPin, Clock, Send, ChevronRight, CheckCircle, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-
-type MotionProps = {
-  children?: React.ReactNode;
-  initial?: any;
-  animate?: any;
-  exit?: any;
-  transition?: any;
-  className?: string;
-  onClick?: () => void;
-  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
-};
-
-const MotionH1 = motion.h1 as React.FC<MotionProps>;
-const MotionP = motion.p as React.FC<MotionProps>;
-const MotionDiv = motion.div as React.FC<MotionProps>;
-const MotionForm = motion.form as React.FC<MotionProps>;
 
 const Contact = () => {
   const router = useRouter();
@@ -37,24 +21,46 @@ const Contact = () => {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'submitted'>('idle');
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
+  });
   
   useEffect(() => {
     document.title = 'Contact Us - OurTopClinic';
   }, []);
   
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormStatus('submitting');
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setFormStatus('submitted');
-      toast({
-        title: "Message sent successfully! 🎉",
-        description: "We'll get back to you as soon as possible.",
-        variant: "default",
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
       });
-    }, 1500);
+      if (res.ok) {
+        setFormStatus('submitted');
+        toast({
+          title: 'Message sent successfully! 🎉',
+          description: "We'll get back to you as soon as possible.",
+          variant: 'default',
+        });
+      } else {
+        toast({ title: 'Failed to send message', variant: 'destructive' });
+        setFormStatus('idle');
+      }
+    } catch (err) {
+      toast({ title: 'Error sending message', variant: 'destructive' });
+      setFormStatus('idle');
+    }
   };
 
   // Contact information with enhanced styling
@@ -119,23 +125,27 @@ const Contact = () => {
         <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-accent/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="container mx-auto max-w-5xl text-center relative z-10">
-          <MotionH1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent"
-          >
-            Get In Touch
-          </MotionH1>
-          <MotionP 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          >
-            Have questions about our services or partnership opportunities? 
-            We're here to help. Reach out to our team for assistance.
-          </MotionP>
+          <div className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              style={{ display: 'block' }}
+            >
+              Get In Touch
+            </motion.h1>
+          </div>
+          <div className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              style={{ display: 'block' }}
+            >
+              Have questions about our services or partnership opportunities? 
+              We're here to help. Reach out to our team for assistance.
+            </motion.p>
+          </div>
         </div>
       </section>
       
@@ -144,224 +154,233 @@ const Contact = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Enhanced Contact Form */}
-            <MotionForm
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Card className="bg-white dark:bg-gray-800 shadow-lg border-none overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="bg-gradient-to-r  pb-6">
-                  <CardTitle className="text-2xl">Contact Form</CardTitle>
-                  <CardDescription>Fill out the form below and we'll get back to you soon</CardDescription>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <AnimatePresence mode="wait">
-                    {formStatus === 'submitted' ? (
-                      <MotionDiv
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        className="flex flex-col items-center justify-center py-8"
-                      >
-                        <MotionDiv 
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                          className="h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4"
-                        >
-                          <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-                        </MotionDiv>
-                        <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
-                        <p className="text-center text-muted-foreground mb-6">
-                          Thank you for reaching out. Our team will get back to you shortly.
-                        </p>
-                        <Button 
-                          onClick={() => setFormStatus('idle')}
-                          className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                        >
-                          Send Another Message
-                        </Button>
-                      </MotionDiv>
-                    ) : (
-                      <MotionForm
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onSubmit={handleSubmit}
-                        className="space-y-6"
-                      >
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="name">Your Name</Label>
-                            <Input 
-                              id="name"
-                              placeholder="John Doe"
-                              required
-                              className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">Email Address</Label>
-                            <Input 
-                              id="email"
-                              type="email"
-                              placeholder="johndoe@example.com"
-                              required
-                              className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Phone Number (Optional)</Label>
-                          <Input 
-                            id="phone"
-                            type="tel"
-                            placeholder="+1 (555) 123-4567"
-                            className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="subject">Inquiry Type</Label>
-                          <Select>
-                            <SelectTrigger className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all">
-                              <SelectValue placeholder="Select an inquiry type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="partnership">Partnership Inquiry</SelectItem>
-                              <SelectItem value="services">Services Information</SelectItem>
-                              <SelectItem value="careers">Career Opportunities</SelectItem>
-                              <SelectItem value="support">Technical Support</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="message">Your Message</Label>
-                          <Textarea 
-                            id="message"
-                            placeholder="Please provide details about your inquiry..."
-                            rows={5}
-                            required
-                            className="bg-muted/40 resize-none focus:ring-2 focus:ring-primary/20 transition-all"
-                          />
-                        </div>
-                        
-                        <Button 
-                          type="submit" 
-                          className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                          disabled={formStatus === 'submitting'}
-                        >
-                          {formStatus === 'submitting' ? (
-                            <MotionDiv
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                              className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                            />
-                          ) : (
-                            <>
-                              Send Message
-                              <Send className="ml-2 h-4 w-4" />
-                            </>
-                          )}
-                        </Button>
-                      </MotionForm>
-                    )}
-                  </AnimatePresence>
-                </CardContent>
-              </Card>
-            </MotionForm>
-            
-            {/* Enhanced Contact Information */}
-            <MotionDiv
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-8"
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
-                {contactInfo.map((item, index) => {
-                  const Icon = item.icon;
-                  return (
-                    <MotionDiv
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="h-full"
-                    >
-                      <Card className="bg-white dark:bg-gray-800 shadow-md border-none hover:shadow-lg transition-all hover:-translate-y-1 duration-300 h-full min-h-[180px] flex flex-col justify-between">
-                        <CardContent className="p-6 flex flex-col h-full">
-                          <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4`}>
-                            <Icon className={`h-6 w-6 ${item.color}`} />
-                          </div>
-                          <h3 className="font-bold mb-2">{item.title}</h3>
-                          <div className="space-y-1 flex-1">
-                            {item.details.map((detail, i) => (
-                              <p
-                                key={i}
-                                className={`text-muted-foreground text-sm ${item.title === 'Address' ? 'break-words' : ''}`}
+            <form onSubmit={handleSubmit}>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="bg-white dark:bg-gray-800 shadow-lg border-none overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                  <CardHeader className="bg-gradient-to-r  pb-6">
+                    <CardTitle className="text-2xl">Contact Form</CardTitle>
+                    <CardDescription>Fill out the form below and we'll get back to you soon</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <AnimatePresence mode="wait">
+                      {formStatus === 'submitted' ? (
+                        <div className="flex flex-col items-center justify-center py-8">
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            style={{ display: 'block' }}
+                          >
+                            <div className="h-16 w-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                style={{ display: 'block' }}
                               >
-                                {detail}
-                              </p>
+                                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{ display: 'block' }}
+                          >
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="name">Your Name</Label>
+                                <Input 
+                                  id="name"
+                                  name="name"
+                                  value={form.name}
+                                  onChange={handleChange}
+                                  placeholder="John Doe"
+                                  required
+                                  className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="email">Email Address</Label>
+                                <Input 
+                                  id="email"
+                                  name="email"
+                                  value={form.email}
+                                  onChange={handleChange}
+                                  type="email"
+                                  placeholder="johndoe@example.com"
+                                  required
+                                  className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="phone">Phone Number (Optional)</Label>
+                              <Input 
+                                id="phone"
+                                name="phone"
+                                value={form.phone}
+                                onChange={handleChange}
+                                type="tel"
+                                placeholder="+1 (555) 000-0000"
+                                className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
+                              />
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="subject">Subject</Label>
+                              <Select onValueChange={val => setForm(f => ({ ...f, subject: val }))} value={form.subject}>
+                                <SelectTrigger className="bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all">
+                                  <SelectValue placeholder="Select a subject" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="general">General Inquiry</SelectItem>
+                                  <SelectItem value="support">Technical Support</SelectItem>
+                                  <SelectItem value="billing">Billing Question</SelectItem>
+                                  <SelectItem value="partnership">Partnership Opportunity</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label htmlFor="message">Message</Label>
+                              <Textarea 
+                                id="message"
+                                name="message"
+                                value={form.message}
+                                onChange={handleChange}
+                                placeholder="How can we help you?"
+                                required
+                                className="min-h-[120px] bg-muted/40 focus:ring-2 focus:ring-primary/20 transition-all"
+                              />
+                            </div>
+                            
+                            <Button 
+                              type="submit"
+                              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+                              disabled={formStatus === 'submitting'}
+                            >
+                              {formStatus === 'submitting' ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                  Sending...
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <Send className="w-4 h-4" />
+                                  Send Message
+                                </div>
+                              )}
+                            </Button>
+                          </motion.div>
+                        </div>
+                      )}
+                    </AnimatePresence>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </form>
+            
+            {/* Contact Information Cards */}
+            <div className="space-y-6">
+              {contactInfo.map((info, index) => (
+                <motion.div
+                  key={info.title}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <Card className="bg-white dark:bg-gray-800 shadow-lg border-none overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-lg bg-gradient-to-br ${info.gradient}`}>
+                          <info.icon className={`w-6 h-6 ${info.color}`} />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-2">{info.title}</h3>
+                          <div className="space-y-1">
+                            {info.details.map((detail, i) => (
+                              <p key={i} className="text-muted-foreground">{detail}</p>
                             ))}
                           </div>
-                        </CardContent>
-                      </Card>
-                    </MotionDiv>
-                  );
-                })}
-              </div>
-              
-              {/* Enhanced FAQ Section */}
-              <Card className="bg-white dark:bg-gray-800 shadow-md border-none">
-                <CardHeader>
-                  <CardTitle>Frequently Asked Questions</CardTitle>
-                </CardHeader>
-                <CardContent className="px-6 pb-6">
-                  <div className="space-y-4">
-                    {faqs.map((faq, index) => {
-                      const Icon = faq.icon;
-                      return (
-                        <MotionDiv
-                          key={index}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className={`p-4 rounded-lg border bg-muted/30 cursor-pointer transition-all hover:bg-muted/50 ${
-                            activeFAQ === index ? 'ring-2 ring-primary/20' : ''
-                          }`}
-                          onClick={() => setActiveFAQ(activeFAQ === index ? null : index)}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* FAQ Section */}
+      <section className="py-12 px-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <div className="container mx-auto max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ display: 'block' }}
+          >
+            <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground">Find quick answers to common questions about our services</p>
+          </motion.div>
+          
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card 
+                  className={`bg-white dark:bg-gray-800 shadow-lg border-none overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${
+                    activeFAQ === index ? 'ring-2 ring-primary' : ''
+                  }`}
+                  onClick={() => setActiveFAQ(activeFAQ === index ? null : index)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <faq.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold">{faq.question}</h3>
+                      </div>
+                      <ChevronRight 
+                        className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${
+                          activeFAQ === index ? 'rotate-90' : ''
+                        }`}
+                      />
+                    </div>
+                    <AnimatePresence>
+                      {activeFAQ === index && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          style={{ display: 'block' }}
                         >
-                          <div className="flex items-start gap-3">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                              <Icon className="h-4 w-4 text-primary" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium mb-2">{faq.question}</h4>
-                              <AnimatePresence>
-                                {activeFAQ === index && (
-                                  <MotionDiv
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: "auto", opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    className="text-sm text-muted-foreground overflow-hidden"
-                                  >
-                                    {faq.answer}
-                                  </MotionDiv>
-                                )}
-                              </AnimatePresence>
-                            </div>
-                          </div>
-                        </MotionDiv>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            </MotionDiv>
+                          <p className="mt-4 text-muted-foreground pl-14">{faq.answer}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -370,7 +389,7 @@ const Contact = () => {
       <section className="py-12 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="relative">
-            <MotionDiv
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -408,38 +427,11 @@ const Contact = () => {
                   </div>
                 </CardContent>
               </Card>
-            </MotionDiv>
+            </motion.div>
           </div>
         </div>
       </section>
       
-      {/* Enhanced Newsletter CTA */}
-      <section className="py-16 px-4 bg-gradient-to-r from-primary/30 to-accent/30 mt-12">
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="container mx-auto max-w-3xl text-center"
-        >
-          <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-muted-foreground mb-6">
-            Subscribe to our newsletter to receive the latest updates about our services and healthcare insights.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-            <Input 
-              placeholder="Enter your email" 
-              type="email" 
-              className="bg-white/80 dark:bg-gray-800 focus:ring-2 focus:ring-primary/20 transition-all backdrop-blur-sm" 
-            />
-            <Button asChild className="whitespace-nowrap bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all hover:scale-[1.02] active:scale-[0.98]">
-              <Link href="/about_us">
-                Learn More
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </MotionDiv>
-      </section>
       
       <FooterSection />
       <ScrollToTop />
@@ -448,4 +440,3 @@ const Contact = () => {
 };
 
 export default Contact;
-

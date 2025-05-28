@@ -1,45 +1,48 @@
-import { cn } from "@/lib/utils";
-import { getInitials } from "@/utils";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-export const ProfileImage = ({
-  url,
-  name,
-  className,
-  textClassName,
-  bgColor,
-}: {
-  url?: string;
-  name: string;
+interface ProfileImageProps {
+  url?: string | null;
+  name?: string;
   className?: string;
   textClassName?: string;
   bgColor?: string;
-}) => {
-  if (url)
-    return (
-      <Image
-        src={url}
-        alt={name}
-        height={40}
-        width={40}
-        className={cn(
-          "flex md:hidden lg:block w-10 h-10 rounded-full object-cover",
-          className
-        )}
-      />
-    );
+  size?: number;
+}
 
-  if (name) {
-    return (
-      <div
-        className={cn(
-          "flex md:hidden lg:flex w-10 h-10 rounded-full text-white text-base items-center justify-center font-light",
-          className
-        )}
-        style={{ backgroundColor: bgColor || "#2563eb" }}
-      >
-        <p className={textClassName}>{getInitials(name)}</p>
-      </div>
-    );
-  }
-};
+export function ProfileImage({
+  url,
+  name = "Profile",
+  className,
+  textClassName,
+  bgColor,
+  size = 40,
+}: ProfileImageProps) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-full bg-muted",
+        className
+      )}
+      style={{ 
+        width: size, 
+        height: size,
+        backgroundColor: bgColor 
+      }}
+    >
+      {url ? (
+        <Image
+          src={url}
+          alt={name}
+          fill
+          className="object-cover"
+          sizes={`${size}px`}
+        />
+      ) : (
+        <div className={cn("flex h-full w-full items-center justify-center", textClassName)}>
+          {name.charAt(0).toUpperCase()}
+        </div>
+      )}
+    </div>
+  );
+}

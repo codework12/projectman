@@ -1,13 +1,20 @@
 "use client"
 import React, { useEffect } from 'react';
-import Navbar from '@/components/navbar/Navbar';
-import FooterSection from '@/components/sections/FooterSection';
-import ScrollToTop from '@/components/ScrollToTop';
-import ScrollAnimator from '@/components/ScrollAnimator';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import Navbar from "../../components/navbar/Navbar";
+import FooterSection from "../../components/sections/FooterSection";
+import ScrollToTop from "../../components/ScrollToTop";
+import ScrollAnimator from "../../components/ScrollAnimator";
+import { motion, type MotionProps } from 'framer-motion';
+import { Button } from "../../components/ui/button";
 import Link from 'next/link';
 import { Award, Users, Clock, HeartPulse, ChevronRight, Building, MapPin, Heart, Calendar, Stethoscope, Shield } from 'lucide-react';
+
+type AnimatedDivProps = MotionProps & {
+  className?: string;
+  children?: React.ReactNode;
+};
+
+const AnimatedDiv = motion.div as React.FC<AnimatedDivProps>;
 
 const AboutUs = () => {
   useEffect(() => {
@@ -49,7 +56,7 @@ const AboutUs = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent z-0"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div 
+            <AnimatedDiv 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -66,7 +73,7 @@ const AboutUs = () => {
                 <span className="bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-medium">Compassion</span>
                 <span className="bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-medium">Excellence</span>
               </div>
-            </motion.div>
+            </AnimatedDiv>
           </div>
         </div>
         
@@ -79,7 +86,7 @@ const AboutUs = () => {
       <section className="py-16 md:py-24 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
+            <AnimatedDiv
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -95,9 +102,9 @@ const AboutUs = () => {
                   />
                 </div>
               </div>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div
+            <AnimatedDiv
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -110,7 +117,7 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-300">
                 At OurTopClinic, we are on a mission to transform the way care is delivered. We believe in putting patients first, not paperwork. Our platform was designed to be intuitive, flexible, and personal — whether you are seeking a quick telehealth consultation, long-term wellness care, or support managing chronic conditions, we are here when and how you need us.
               </p>
-            </motion.div>
+            </AnimatedDiv>
           </div>
         </div>
       </section>
@@ -118,7 +125,7 @@ const AboutUs = () => {
       {/* Our Mission Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
         <div className="container mx-auto px-4 text-center">
-          <motion.div
+          <AnimatedDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -141,7 +148,7 @@ const AboutUs = () => {
             <p className="text-gray-600 dark:text-gray-300">
               At OurTopClinic, we believe that everyone deserves access to high-quality healthcare. Through our innovative platforms and dedicated team, we're working to break down barriers and create a healthcare experience that truly puts patients first.
             </p>
-          </motion.div>
+          </AnimatedDiv>
         </div>
       </section>
       
@@ -149,7 +156,7 @@ const AboutUs = () => {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <motion.div
+            <AnimatedDiv
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
@@ -159,17 +166,17 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                 These principles guide every decision we make and every interaction we have.
               </p>
-            </motion.div>
+            </AnimatedDiv>
           </div>
           
-          <motion.div 
+          <AnimatedDiv 
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={staggerContainer}
           >
-            <motion.div 
+            <AnimatedDiv 
               className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover-lift"
               variants={fadeInUp}
             >
@@ -180,9 +187,9 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 We treat each patient with empathy, dignity and respect, recognizing the human aspect of healthcare.
               </p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover-lift"
               variants={fadeInUp}
             >
@@ -193,9 +200,9 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 We strive for the highest standards in clinical care, service, and every aspect of our operations.
               </p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover-lift"
               variants={fadeInUp}
             >
@@ -206,9 +213,9 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 We uphold honesty, transparency, and ethical behavior in all our interactions and decisions.
               </p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover-lift"
               variants={fadeInUp}
             >
@@ -219,17 +226,16 @@ const AboutUs = () => {
               <p className="text-gray-600 dark:text-gray-400 text-sm">
                 We embrace new ideas, technologies, and approaches to continuously improve healthcare delivery.
               </p>
-            </motion.div>
-          </motion.div>
+            </AnimatedDiv>
+          </AnimatedDiv>
         </div>
       </section>
       
- 
       {/* Stats Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <motion.div 
+            <AnimatedDiv 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -238,9 +244,9 @@ const AboutUs = () => {
             >
               <h3 className="text-4xl font-bold gradient-text mb-2">15+</h3>
               <p className="text-gray-600 dark:text-gray-400">Locations</p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -249,9 +255,9 @@ const AboutUs = () => {
             >
               <h3 className="text-4xl font-bold gradient-text mb-2">500+</h3>
               <p className="text-gray-600 dark:text-gray-400">Healthcare Professionals</p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -260,9 +266,9 @@ const AboutUs = () => {
             >
               <h3 className="text-4xl font-bold gradient-text mb-2">100K+</h3>
               <p className="text-gray-600 dark:text-gray-400">Patients Served</p>
-            </motion.div>
+            </AnimatedDiv>
             
-            <motion.div 
+            <AnimatedDiv 
               className="text-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -271,7 +277,7 @@ const AboutUs = () => {
             >
               <h3 className="text-4xl font-bold gradient-text mb-2">99%</h3>
               <p className="text-gray-600 dark:text-gray-400">Patient Satisfaction</p>
-            </motion.div>
+            </AnimatedDiv>
           </div>
         </div>
       </section>
@@ -279,7 +285,7 @@ const AboutUs = () => {
       {/* CTA Section */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
         <div className="container mx-auto px-4 text-center">
-          <motion.div
+          <AnimatedDiv
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -290,17 +296,23 @@ const AboutUs = () => {
             <p className="text-gray-600 dark:text-gray-300 mb-8">
               Join thousands of patients who have transformed their healthcare experience with OurTopClinic.
             </p>
-            <Button asChild size="lg" className="gradient-bg group button-3d">
-              <Link href="/onboarding">
-                Get Started Today
-                <ChevronRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Button>
-          </motion.div>
+            <div className="flex gap-4 justify-center">
+              <Button asChild size="lg" variant="outline" className="group">
+                <Link href="/">
+                  Back to Home
+                  <ChevronRight className="ml-2 h-7 w-7 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" className="gradient-bg group button-3d">
+                <Link href="/onboarding">
+                  Get Started Today
+                  <ChevronRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
+          </AnimatedDiv>
         </div>
       </section>
-      
-     
       
       <FooterSection />
       <ScrollToTop />

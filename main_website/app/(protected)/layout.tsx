@@ -1,6 +1,7 @@
-import { Navbar } from "@/components/navbar";
+import { MaybeNavbar } from "@/components/MaybeNavbar";
 import { Sidebar } from "@/components/sidebar";
 import React from "react";
+import { redirect } from "next/navigation";
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,7 +14,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       <div className="ml-14 lg:ml-[5rem] xl:ml-[6rem] transition-all duration-300 flex flex-col min-w-0 min-h-screen">
-        <Navbar />
+        <MaybeNavbar />
         <div className="flex-1 w-full min-w-0 bg-background">{children}</div>
       </div>
     </div>

@@ -1,49 +1,80 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/hooks/use-toast';
-import { Play, UserPlus, UserX, Crown, Video, Mic, Phone } from 'lucide-react';
+import {
+  Play,
+  UserPlus,
+  UserX,
+  Crown,
+  Video,
+  Mic,
+  Phone,
+  Settings,
+  ScreenShare,
+  ScreenShareOff,
+  Share,
+  FileText
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface DoctorControlsProps {
   onStartCall: () => void;
   onAdmitPatient: () => void;
   onRemovePatient: () => void;
+  onToggleChat?: () => void;
+  onShareScreen?: () => void;
+  onShareFile?: () => void;
+  onOpenSettings?: () => void;
   callStarted: boolean;
   patientWaiting: boolean;
   patientAdmitted: boolean;
+  isScreenSharing?: boolean;
 }
 
 const DoctorControls: React.FC<DoctorControlsProps> = ({
   onStartCall,
   onAdmitPatient,
   onRemovePatient,
+  onToggleChat,
+  onShareScreen,
+  onShareFile,
+  onOpenSettings,
   callStarted,
   patientWaiting,
-  patientAdmitted
+  patientAdmitted,
+  isScreenSharing = false
 }) => {
   const { toast } = useToast();
 
   const handleStartCall = () => {
     onStartCall();
     toast({
-      title: 'Video call started',
-      description: 'You can now admit patients to the call.',
+      title: "Video call started",
+      description: "You can now admit patients to the call.",
     });
   };
 
   const handleAdmitPatient = () => {
     onAdmitPatient();
     toast({
-      title: 'Patient admitted',
-      description: 'The patient has joined the call.',
+      title: "Patient admitted",
+      description: "The patient has joined the call.",
     });
   };
 
   const handleRemovePatient = () => {
     onRemovePatient();
     toast({
-      title: 'Patient removed',
-      description: 'The patient has been removed from the call.',
+      title: "Patient removed",
+      description: "The patient has been removed from the call.",
     });
   };
 
@@ -71,19 +102,78 @@ const DoctorControls: React.FC<DoctorControlsProps> = ({
             )}
             
             {patientAdmitted && (
-              <Button 
-                onClick={handleRemovePatient}
-                variant="destructive"
-              >
-                <UserX className="h-4 w-4 mr-2" />
-                Remove Patient
-              </Button>
+              <>
+                <Button 
+                  variant="destructive"
+                  onClick={handleRemovePatient}
+                >
+                  <UserX className="h-4 w-4 mr-2" />
+                  Remove Patient
+                </Button>
+                
+                {onShareScreen && (
+                  <Button
+                    variant={isScreenSharing ? "secondary" : "outline"}
+                    onClick={onShareScreen}
+                  >
+                    {isScreenSharing ? (
+                      <>
+                        <ScreenShareOff className="h-4 w-4 mr-2" />
+                        Stop Sharing
+                      </>
+                    ) : (
+                      <>
+                        <ScreenShare className="h-4 w-4 mr-2" />
+                        Share Screen
+                      </>
+                    )}
+                  </Button>
+                )}
+                
+                {onShareFile && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline">
+                        <Share className="h-4 w-4 mr-2" />
+                        Share
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={onShareFile}>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Share Document
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </>
             )}
             
-            <Button variant="outline">
-              <Crown className="h-4 w-4 mr-2" />
-              Host Controls
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Host Controls
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Session Controls</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onToggleChat}>
+                  Toggle Chat
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Mute All Participants
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Disable Video For All
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onOpenSettings}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Session Settings
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         )}
       </div>

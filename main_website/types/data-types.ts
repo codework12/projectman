@@ -1,10 +1,13 @@
 import { AppointmentStatus, Doctor, Patient } from "@prisma/client";
 
-export type AppointmentsChartProps = {
+export interface AppointmentChartData {
   name: string;
   appointment: number;
   completed: number;
-}[];
+  date: string;
+}
+
+export type AppointmentsChartProps = AppointmentChartData[];
 
 export type Appointment = {
   id: string;

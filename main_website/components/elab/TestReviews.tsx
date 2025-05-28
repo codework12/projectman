@@ -1,10 +1,7 @@
-
-import React, { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Star, MessageSquare, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ReviewProps {
   testId: string;
@@ -13,171 +10,146 @@ interface ReviewProps {
 
 interface Review {
   id: string;
-  author: string;
-  avatar?: string;
   rating: number;
-  date: string;
   comment: string;
-  helpful: number;
-  notHelpful: number;
+  createdAt: string;
+  patientName: string;
 }
 
+const getInitials = (name: string) => {
+  return name
+    .split(' ')
+    .map(part => part.charAt(0))
+    .join('');
+};
+
 const TestReviews: React.FC<ReviewProps> = ({ testId, testName }) => {
-  const [reviews] = useState<Review[]>([
-    {
-      id: '1',
-      author: 'John D.',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      rating: 5,
-      date: '2 weeks ago',
-      comment: 'The process was quick and painless. Results came back earlier than expected.',
-      helpful: 24,
-      notHelpful: 2
-    },
-    {
-      id: '2',
-      author: 'Sarah M.',
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      rating: 4,
-      date: '1 month ago',
-      comment: 'Great service and professional staff. The only reason for 4 stars is because I had to wait a bit longer than scheduled.',
-      helpful: 18,
-      notHelpful: 3
-    },
-    {
-      id: '3',
-      author: 'Robert K.',
-      rating: 5,
-      date: '3 months ago',
-      comment: 'Excellent experience from start to finish. The test was thorough and the results were easy to understand.',
-      helpful: 42,
-      notHelpful: 1
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [canReview, setCanReview] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      fetch(`/api/reviews?testId=${testId}`)
+        .then(res => res.json())
+        .then(data => setReviews(data));
+      fetch(`/api/reviews/eligibility?testId=${testId}`)
+        .then(res => res.json())
+        .then(data => setCanReview(data.eligible));
     }
-  ]);
-  
-  const [helpfulClicks, setHelpfulClicks] = useState<Record<string, 'helpful' | 'notHelpful' | null>>({});
-  
-  const handleHelpfulClick = (reviewId: string, type: 'helpful' | 'notHelpful') => {
-    setHelpfulClicks(prev => ({
-      ...prev,
-      [reviewId]: prev[reviewId] === type ? null : type
-    }));
+  }, [open, testId]);
+
+  const averageRating = reviews.length
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ testId, rating, comment }),
+    });
+    setRating(0);
+    setComment('');
+    setSubmitting(false);
+    // Refetch reviews
+    fetch(`/api/reviews?testId=${testId}`)
+      .then(res => res.json())
+      .then(data => setReviews(data));
+    fetch(`/api/reviews/eligibility?testId=${testId}`)
+      .then(res => res.json())
+      .then(data => setCanReview(data.eligible));
   };
-  
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part.charAt(0))
-      .join('');
-  };
-  
-  const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-  
+
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1">
-          <MessageSquare size={14} />
-          <span>{reviews.length} Reviews</span>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <span className="flex items-center gap-1">
+            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+            {averageRating.toFixed(1)}
+            <span className="text-gray-500 ml-1">({reviews.length})</span>
+          </span>
         </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle className="text-xl">{testName} Reviews</SheetTitle>
-        </SheetHeader>
-        
-        <div className="mt-6 space-y-6">
-          <div className="flex items-center justify-between border-b pb-4">
-            <div>
-              <div className="flex items-center">
+      </DialogTrigger>
+      <DialogContent className="max-w-lg p-0 overflow-hidden bg-gray-900 text-white">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-yellow-800 to-yellow-600 px-6 py-4 flex flex-col items-center border-b border-yellow-700">
+          <DialogHeader className="w-full">
+            <DialogTitle className="text-2xl font-bold text-yellow-100 text-center mb-2">{testName} Reviews</DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center gap-2 mb-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={22}
+                className={i < Math.round(averageRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}
+              />
+            ))}
+            <span className="font-bold text-xl text-yellow-100">{averageRating.toFixed(1)}</span>
+          </div>
+          <span className="text-gray-300 text-sm">{reviews.length} customer review{reviews.length === 1 ? '' : 's'}</span>
+        </div>
+        <div className="px-6 py-4 bg-gray-800">
+          {/* Write a Review */}
+          {canReview && (
+            <div className="mb-8 rounded-lg border border-yellow-700 bg-gray-700 p-4 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    size={18}
-                    className={`${
-                      i < Math.floor(averageRating)
-                        ? "text-yellow-400 fill-yellow-400"
-                        : i < averageRating
-                        ? "text-yellow-400 fill-yellow-400 opacity-50"
-                        : "text-gray-300"
-                    }`}
+                    size={28}
+                    className={i < rating ? "text-yellow-400 fill-yellow-400 cursor-pointer" : "text-gray-500 cursor-pointer"}
+                    onClick={() => setRating(i + 1)}
                   />
                 ))}
-                <span className="ml-2 text-gray-700 font-medium">{averageRating.toFixed(1)} out of 5</span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">{reviews.length} customer reviews</p>
+              <textarea
+                className="w-full border border-yellow-700 rounded p-2 mb-2 bg-gray-600 text-white focus:bg-gray-500 focus:border-yellow-400 transition"
+                rows={3}
+                placeholder="Write your review (optional)"
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+              />
+              <Button onClick={handleSubmit} disabled={submitting || rating === 0} className="bg-yellow-600 hover:bg-yellow-500 text-yellow-100 font-bold w-full">
+                {submitting ? "Submitting..." : "Submit Review"}
+              </Button>
             </div>
-          </div>
-          
-          <div className="space-y-6">
-            {reviews.map((review) => (
-              <AnimatePresence key={review.id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border-b pb-4"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        {review.avatar ? (
-                          <AvatarImage src={review.avatar} alt={review.author} />
-                        ) : null}
-                        <AvatarFallback>{getInitials(review.author)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">{review.author}</p>
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              size={14}
-                              className={`${
-                                i < review.rating
-                                  ? "text-yellow-400 fill-yellow-400"
-                                  : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-sm text-gray-500">{review.date}</span>
+          )}
+          {/* List of Reviews */}
+          <div className="space-y-4 max-h-72 overflow-y-auto">
+            {reviews.length === 0 && (
+              <div className="text-center text-gray-400 py-8">No reviews yet. Be the first to review this test!</div>
+            )}
+            {reviews.map((r, idx) => (
+              <div key={r.id || idx} className="border-b border-gray-700 pb-3 flex gap-3 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-700 flex items-center justify-center font-bold text-yellow-100 text-lg">
+                  {getInitials(r.patientName)}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={i < r.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}
+                      />
+                    ))}
+                    <span className="font-medium text-gray-200">{r.patientName}</span>
+                    <span className="text-xs text-gray-400 ml-2">{new Date(r.createdAt).toLocaleDateString()}</span>
                   </div>
-                  
-                  <p className="mt-3 text-gray-700">{review.comment}</p>
-                  
-                  <div className="mt-3 flex items-center space-x-4">
-                    <button
-                      className={`flex items-center text-sm ${
-                        helpfulClicks[review.id] === 'helpful'
-                          ? 'text-green-600 font-medium'
-                          : 'text-gray-500'
-                      }`}
-                      onClick={() => handleHelpfulClick(review.id, 'helpful')}
-                    >
-                      <ThumbsUp size={14} className="mr-1" />
-                      <span>Helpful ({review.helpful + (helpfulClicks[review.id] === 'helpful' ? 1 : 0)})</span>
-                    </button>
-                    <button
-                      className={`flex items-center text-sm ${
-                        helpfulClicks[review.id] === 'notHelpful'
-                          ? 'text-red-600 font-medium'
-                          : 'text-gray-500'
-                      }`}
-                      onClick={() => handleHelpfulClick(review.id, 'notHelpful')}
-                    >
-                      <ThumbsDown size={14} className="mr-1" />
-                      <span>Not Helpful ({review.notHelpful + (helpfulClicks[review.id] === 'notHelpful' ? 1 : 0)})</span>
-                    </button>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                  <div className="text-gray-300 text-sm">{r.comment}</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -1,115 +1,172 @@
 "use client";
-import { AppointmentsChartProps } from "@/types/data-types";
 
-import React, { useEffect, useState } from "react";
+import { AppointmentsChartProps } from "@/types/data-types";
+import React, { useEffect, useRef } from "react";
 import {
   ResponsiveContainer,
-  AreaChart,
+  LineChart,
   CartesianGrid,
   Legend,
-  Area,
+  Line,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import { BarChart2 } from "lucide-react";
+import { format, parseISO, isValid, startOfYear, endOfYear, getMonth } from "date-fns";
 
 interface DataProps {
   data: AppointmentsChartProps;
 }
+
 export const AppointmentChart = ({ data }: DataProps) => {
-  const [chartHeight, setChartHeight] = useState(300);
+  const chartRef = useRef<any>(null);
 
-  useEffect(() => {
-    const updateHeight = () => {
-      setChartHeight(window.innerWidth < 640 ? 180 : 300);
-    };
+  // Calculate the date range for the entire year
+  const today = new Date();
+  const startDate = startOfYear(today);
+  const endDate = endOfYear(today);
 
-    // Set initial height
-    updateHeight();
+  // Initialize monthly data structure
+  const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+    name: format(new Date(today.getFullYear(), i, 1), 'MMM'),
+    appointment: 0,
+    completed: 0,
+    date: format(new Date(today.getFullYear(), i, 1), 'yyyy-MM-dd')
+  }));
 
-    // Add event listener for window resize
-    window.addEventListener('resize', updateHeight);
+  // Process the data to count appointments by month
+  data.forEach(item => {
+    try {
+      if (!item.date) return;
+      const itemDate = parseISO(item.date);
+      if (!isValid(itemDate) || itemDate < startDate || itemDate > endDate) return;
+      
+      const monthIndex = getMonth(itemDate);
+      monthlyData[monthIndex].appointment += item.appointment;
+      monthlyData[monthIndex].completed += item.completed;
+    } catch (error) {
+      console.error('Error processing appointment data:', error);
+    }
+  });
 
-    // Cleanup
-    return () => window.removeEventListener('resize', updateHeight);
-  }, []);
+  // If no data is available, show a message
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl p-6 h-full flex items-center justify-center shadow-sm border border-gray-100">
+        <p className="text-gray-500 font-medium">No appointment data available</p>
+      </div>
+    );
+  }
+
+  // If all months have zero appointments, show a message
+  const hasAppointments = monthlyData.some(month => month.appointment > 0 || month.completed > 0);
+  if (!hasAppointments) {
+    return (
+      <div className="bg-white rounded-xl p-6 h-full flex items-center justify-center shadow-sm border border-gray-100">
+        <p className="text-gray-500 font-medium">No appointments for {format(today, 'yyyy')}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative bg-card rounded-2xl shadow-xl border border-border p-2 sm:p-6 h-full overflow-hidden w-full">
-      {/* Animated Gradient accent bar */}
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary to-accent rounded-t-2xl z-10 animate-shimmer" />
-      <div className="flex items-center gap-3 mb-2">
-        <span className="relative flex items-center justify-center">
-          <span className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/40 to-accent/30 blur-md scale-110 z-0 animate-pulse" />
-          <span className="bg-primary/10 text-primary rounded-full p-2 shadow-sm relative z-10">
-            <BarChart2 className="w-5 h-5 sm:w-6 sm:h-6 group-hover:animate-bounce" />
-          </span>
-        </span>
+    <div className="bg-white rounded-xl p-4 sm:p-6 h-full shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
         <div>
-          <h1 className="text-base sm:text-2xl font-extrabold text-foreground tracking-tight">Appointments</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-0.5">Monthly Overview</p>
+          <h1 className="text-lg sm:text-xl font-semibold text-gray-800">Appointment Overview</h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">Monthly appointment statistics</p>
+        </div>
+        <div className="text-xs sm:text-sm font-medium text-gray-600 bg-gray-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full mt-2 sm:mt-0">
+          {format(today, 'yyyy')}
         </div>
       </div>
-      <div className="rounded-xl bg-muted p-2 sm:p-4 shadow-inner w-full">
-        <ResponsiveContainer width="100%" height={chartHeight}>
-          <AreaChart data={data}>
+
+      <div className="overflow-x-auto" ref={chartRef}>
+        <ResponsiveContainer width="100%" height={280}>
+          <LineChart data={monthlyData} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
             <defs>
-              <linearGradient id="colorAppointment" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#2563eb" stopOpacity={0.1}/>
+              <linearGradient id="appointmentGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#1a1a1a" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#1a1a1a" stopOpacity={0}/>
               </linearGradient>
-              <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+              <linearGradient id="completedGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" />
-            <XAxis dataKey="name" axisLine={false} tick={{ fill: "var(--foreground)", fontWeight: 500 }} tickLine={false} />
-            <YAxis axisLine={false} tick={{ fill: "var(--foreground)", fontWeight: 500 }} tickLine={false} />
-          <Tooltip
-              contentStyle={{ borderRadius: "14px", borderColor: "var(--border)", background: "var(--card)", boxShadow: "0 4px 24px 0 rgba(16,185,129,0.12)" }}
-              itemStyle={{ fontWeight: 600, color: "#2563eb" }}
-              labelStyle={{ color: "var(--foreground)", fontWeight: 700 }}
-          />
-          <Legend
-            align="left"
-            verticalAlign="top"
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              vertical={false} 
+              stroke="#f0f0f0" 
+              opacity={0.5}
+            />
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tick={{ fill: "#6b7280", fontSize: 10, fontWeight: 500 }}
+              tickLine={false}
+              padding={{ left: 10, right: 10 }}
+            />
+            <YAxis 
+              axisLine={false} 
+              tick={{ fill: "#6b7280", fontSize: 10, fontWeight: 500 }} 
+              tickLine={false}
+              width={35}
+            />
+            <Tooltip
+              contentStyle={{ 
+                borderRadius: "8px", 
+                border: "1px solid #f0f0f0",
+                backgroundColor: "white",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                padding: "8px",
+                fontSize: "12px"
+              }}
+              labelStyle={{ 
+                color: "#374151",
+                fontWeight: 600,
+                marginBottom: "4px",
+                fontSize: "12px"
+              }}
+              itemStyle={{ 
+                color: "#6b7280",
+                padding: "2px 0",
+                fontSize: "12px"
+              }}
+            />
+            <Legend
+              align="center"
+              verticalAlign="top"
+              wrapperStyle={{
+                paddingTop: "0",
+                paddingBottom: "10px",
+                fontSize: "12px",
+                fontWeight: 500
+              }}
               iconType="circle"
-            wrapperStyle={{
-                paddingTop: "10px",
-                paddingBottom: "20px",
-              textTransform: "capitalize",
-                fontWeight: 700,
-                color: "var(--primary)",
-                fontSize: "1rem",
-                letterSpacing: "0.01em",
-            }}
-          />
-            <Area
+              iconSize={6}
+            />
+            <Line
               type="monotone"
-            dataKey="appointment"
+              dataKey="appointment"
+              name="Total Appointments"
+              stroke="#1a1a1a"
+              strokeWidth={2}
+              dot={{ r: 3, fill: "#1a1a1a", strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: "#1a1a1a", strokeWidth: 2 }}
+              fill="url(#appointmentGradient)"
+            />
+            <Line
+              type="monotone"
+              dataKey="completed"
+              name="Completed"
               stroke="#2563eb"
-              fillOpacity={1}
-              fill="url(#colorAppointment)"
-              strokeWidth={3}
-              dot={{ r: 5, stroke: "#fff", strokeWidth: 2 }}
-              isAnimationActive={true}
-              animationDuration={900}
-          />
-            <Area
-              type="monotone"
-            dataKey="completed"
-              stroke="#10b981"
-              fillOpacity={1}
-              fill="url(#colorCompleted)"
-              strokeWidth={3}
-              dot={{ r: 5, stroke: "#fff", strokeWidth: 2 }}
-              isAnimationActive={true}
-              animationDuration={900}
-          />
-          </AreaChart>
-      </ResponsiveContainer>
+              strokeWidth={2}
+              dot={{ r: 3, fill: "#2563eb", strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: "#2563eb", strokeWidth: 2 }}
+              fill="url(#completedGradient)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

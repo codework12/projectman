@@ -80,6 +80,7 @@ export const BookAppointment = ({ data, doctors }: { data: Patient; doctors: Doc
         form.reset({});
         router.refresh();
         toast.success("Appointment created successfully");
+        router.push("/record/appoiment");
         setOpen(false);
         setStep(1);
         setIntakeData(null);
@@ -115,9 +116,6 @@ export const BookAppointment = ({ data, doctors }: { data: Patient; doctors: Doc
           </div>
         ) : (
           <div className="h-full overflow-y-auto p-4">
-            <SheetHeader>
-              <SheetTitle>Book Appointment</SheetTitle>
-            </SheetHeader>
             {step === 1 && <PatientIntakeForm onNext={handleIntakeNext} />}
             {step === 2 && (
               <Form {...form}>

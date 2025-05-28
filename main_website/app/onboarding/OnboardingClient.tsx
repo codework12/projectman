@@ -57,7 +57,7 @@ export default function OnboardingClient() {
 
       <div className="flex-1 flex items-center justify-center p-4">
         <motion.div
-          className="w-full max-w-4xl"
+          style={{ width: '100%', maxWidth: '56rem' }}
           initial="hidden"
           animate="visible"
           variants={containerVariants}
@@ -176,7 +176,7 @@ export default function OnboardingClient() {
             </motion.div>
           </div>
 
-          <motion.div variants={itemVariants} className="text-center">
+          <motion.div variants={itemVariants} style={{ textAlign: 'center' }}>
             <Button
               size="lg"
               className="gradient-bg button-3d"

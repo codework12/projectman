@@ -93,7 +93,7 @@ const Appointments = async (props: {
           <ProfileImage
             url={item?.patient?.img!}
             name={patient_name}
-            bgColor={item?.patient?.colorCode!}
+            className="size-10"
           />
           <div>
             <div className="font-bold text-foreground uppercase">{patient_name}</div>
@@ -107,8 +107,7 @@ const Appointments = async (props: {
             <ProfileImage
               url={item.doctor?.img!}
               name={item.doctor?.name}
-              bgColor={item?.doctor?.colorCode!}
-              textClassName="text-foreground"
+              className="size-10"
             />
             <div>
               <div className="font-semibold uppercase text-foreground">{item.doctor?.name}</div>
@@ -116,11 +115,9 @@ const Appointments = async (props: {
             </div>
           </div>
         </td>
-        <td className="text-center border-r border-border">{item.mode === 'Virtual' ? 'Virtual' : 'In Person'}</td>
+        <td className="text-center border-r border-border">{item.mode && item.mode.toLowerCase() === 'virtual' ? 'Virtual' : 'In Person'}</td>
         <td className="text-center border-r border-border">
-          <span className="rounded-none px-2 py-1 text-sm font-medium bg-card text-foreground border border-border shadow-none">
-            <AppointmentStatusIndicator status={item.status!} />
-          </span>
+          <AppointmentStatusIndicator status={item.status!} />
         </td>
         <td className="text-right pr-4">
           <span className="inline-block">

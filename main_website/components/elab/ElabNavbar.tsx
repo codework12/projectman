@@ -6,14 +6,15 @@ import CartDropdown from "@/components/elab/CartDropdown";
 import { CartProvider } from "@/components/context/CartContext";
 import UserProfile from '@/components/elab/UserProfile';
 import { Award } from "lucide-react";
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const ElabNavbar = () => (
   <CartProvider>
     <div className="h-16 px-6 flex items-center justify-between bg-background text-foreground border-b border-border">
       <div className="flex items-center gap-6">
-        <Link href="/" className="text-xl md:text-2xl font-bold text-elab-medical-blue">
+        <Link href="/Elabs" className="text-xl md:text-2xl font-bold text-elab-medical-blue">
           <div className="flex items-center">
-            OurTopClinic <span className="text-gray-600">E-Lab</span>
+            Direct Consumer Lab
           </div>
         </Link>
       </div>
@@ -25,6 +26,7 @@ export const ElabNavbar = () => (
               {/* </div> */}
               
               <div className="flex items-center space-x-2">
+                <ThemeToggle />
                 <UserProfile />
               </div>
             </div>

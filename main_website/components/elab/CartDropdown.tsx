@@ -22,7 +22,7 @@ const CartDropdown: React.FC = () => {
         <ShoppingCart className="h-5 w-5" />
         {itemCount > 0 && (
           <Badge 
-            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-red-500"
+            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-red-500 dark:bg-red-400 text-white dark:text-gray-900"
           >
             {itemCount}
           </Badge>
@@ -31,7 +31,9 @@ const CartDropdown: React.FC = () => {
       
       {isOpen && (
         <div className="absolute right-0 mt-2 w-96 z-50">
-          <CartPanel key={itemCount} onClose={() => setIsOpen(false)} />
+          <div className="rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <CartPanel key={itemCount} onClose={() => setIsOpen(false)} />
+          </div>
         </div>
       )}
     </div>

@@ -69,35 +69,39 @@ export function HeroSection() {
               <span>Trusted by 10,000+ patients</span>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="aspect-square relative rounded-2xl overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80"
-                alt="Doctor consultation"
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/50 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <p className="text-sm font-medium">Professional Healthcare</p>
-                <p className="text-xs text-emerald-100">Expert doctors available 24/7</p>
-              </div>
-            </div>
+          <div className="relative">
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute -top-4 -right-4 bg-white text-emerald-600 px-4 py-2 rounded-full shadow-lg flex items-center gap-2"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              style={{ display: 'block' }}
             >
-              <CheckCircle2 className="w-5 h-5" />
-              <span className="text-sm font-medium">Verified Doctors</span>
+              <div className="aspect-square relative rounded-2xl overflow-hidden">
+                <Image
+                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80"
+                  alt="Doctor consultation"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/50 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <p className="text-sm font-medium">Professional Healthcare</p>
+                  <p className="text-xs text-emerald-100">Expert doctors available 24/7</p>
+                </div>
+              </div>
+              <div className="absolute -top-4 -right-4 bg-white text-emerald-600 px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  style={{ display: 'block' }}
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="text-sm font-medium">Verified Doctors</span>
+                </motion.div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

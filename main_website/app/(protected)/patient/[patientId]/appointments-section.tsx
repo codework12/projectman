@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "../../../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ViewAppointmentClient } from "@/components/view-appointment-client";
+import { ViewAppointmentClient } from "../../../../components/view-appointment-client";
 
 interface AppointmentsSectionProps {
   patientId: string;

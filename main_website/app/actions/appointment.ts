@@ -8,14 +8,26 @@ import { AppointmentStatus } from "@prisma/client";
 
 export async function createNewAppointment(data: any) {
   try {
+    console.log("Booking data received:", data);
     const validatedData = AppointmentSchema.safeParse(data);
 
     if (!validatedData.success) {
+      console.log("Validation failed:", validatedData.error);
       return { success: false, msg: "Invalid data" };
     }
     const validated = validatedData.data;
 
-    await db.appointment.create({
+    // Create the appointment first
+    console.log("Creating appointment with:", {
+      patient_id: data.patient_id,
+      doctor_id: validated.doctor_id,
+      time: validated.time,
+      type: validated.type,
+      appointment_date: new Date(validated.appointment_date),
+      note: validated.note,
+      mode: validated.mode,
+    });
+    const appointment = await db.appointment.create({
       data: {
         patient_id: data.patient_id,
         doctor_id: validated.doctor_id,
@@ -26,16 +38,55 @@ export async function createNewAppointment(data: any) {
         mode: validated.mode,
       },
     });
+    console.log("Appointment created:", appointment);
+
+    // Create the PatientIntake record, if intake fields are present
+    if (data.chiefComplaint) {
+      console.log("Creating PatientIntake with:", {
+        appointment_id: appointment.id,
+        patient_id: data.patient_id,
+        doctor_id: validated.doctor_id,
+        service_id: data.service_id,
+        chiefComplaint: data.chiefComplaint,
+        allergies: data.allergies,
+        currentMedications: data.currentMedications,
+        pastMedicalConditions: data.pastMedicalConditions,
+        bloodPressure: data.bloodPressure,
+        temperature: data.temperature,
+        pharmacyName: data.pharmacyName,
+        pharmacyAddress: data.pharmacyAddress,
+        pharmacyPhone: data.pharmacyPhone,
+      });
+      await db.patientIntake.create({
+        data: {
+          appointment_id: appointment.id,
+          patient_id: data.patient_id,
+          doctor_id: validated.doctor_id,
+          service_id: data.service_id,
+          chiefComplaint: data.chiefComplaint,
+          allergies: data.allergies,
+          currentMedications: data.currentMedications,
+          pastMedicalConditions: data.pastMedicalConditions,
+          bloodPressure: data.bloodPressure,
+          temperature: data.temperature,
+          pharmacyName: data.pharmacyName,
+          pharmacyAddress: data.pharmacyAddress,
+          pharmacyPhone: data.pharmacyPhone,
+        },
+      });
+      console.log("PatientIntake created successfully");
+    }
 
     return {
       success: true,
       message: "Appointment booked successfully",
     };
   } catch (error) {
-    console.log(error);
+    console.log("Error in createNewAppointment:", error);
     return { success: false, msg: "Internal Server Error" };
   }
 }
+
 export async function appointmentAction(
   id: string | number,
 

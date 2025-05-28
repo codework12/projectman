@@ -79,12 +79,34 @@ export async function createNewDoctor(data: any) {
 
 export async function addNewService(data: any) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, msg: "Unauthorized" };
+    }
+
     const isValidData = ServicesSchema.safeParse(data);
+    if (!isValidData.success) {
+      return { success: false, msg: "Invalid data provided" };
+    }
 
     const validatedData = isValidData.data;
+    const client = await clerkClient();
+    const clerkUser = await client.users.getUser(userId);
+    const providerName = clerkUser?.firstName && clerkUser?.lastName
+      ? `${clerkUser.firstName} ${clerkUser.lastName}`
+      : clerkUser?.firstName || clerkUser?.lastName || "Provider";
 
     await db.services.create({
-      data: { ...validatedData!, price: Number(data.price!) },
+      data: {
+        ...validatedData,
+        price: Number(data.price!),
+        providerName,
+        doctor: {
+          connect: {
+            id: userId
+          }
+        }
+      },
     });
 
     return {

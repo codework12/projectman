@@ -2,25 +2,30 @@ import { getPatientFullDataById } from "@/utils/services/patient";
 import { auth } from "@clerk/nextjs/server";
 import PatientProfileClient from "./patient-profile-client";
 
-export default async function PatientProfile({
-  params,
-  searchParams,
-}: {
-  params: { patientId: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const { userId } = await auth();
-  const patientId = params.patientId === "self" ? userId : params.patientId;
+interface ParamsProps {
+  params: Promise<{ patientId: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-  if (!patientId) {
-    return <div>Patient not found</div>;
-  }
+const PatientProfile = async (props: ParamsProps) => {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
 
-  const result = await getPatientFullDataById(patientId);
+  let id = params.patientId;
+  let patientId = params.patientId;
+
+  if (patientId === "self") {
+    const { userId } = await auth();
+    id = userId!;
+  } else id = patientId;
+
+  const result = await getPatientFullDataById(id);
   if (!result.success) {
     return <div>Error loading patient: {"message" in result ? result.message : "Unknown error"}</div>;
   }
   const { data } = result as { success: true; data: any };
 
-  return <PatientProfileClient data={data} patientId={params.patientId} id={patientId} />;
-}
+  return <PatientProfileClient data={data} patientId={patientId} id={id} />;
+};
+
+export default PatientProfile;

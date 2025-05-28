@@ -4,25 +4,13 @@ import { getRecentApplications } from '@/utils/appointments';
 import DoctorProfileClient from './doctor-profile-client';
 import { WorkingDays } from '@prisma/client';
 
-interface TransformedDoctor {
-  name: string;
-  specialty: string;
-  title: string;
-  experience: string;
-  location: string;
-  email: string;
-  phone: string;
-  website: string;
-  bio: string;
-  education: any[];
-  certifications: any[];
-  languages: any[];
-  workingHours: { day: string; hours: string; }[];
-  rating: string;
-  totalAppointments: number;
+interface ParamsProps {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function DoctorProfile({ params }: { params: { id: string } }) {
+const DoctorProfile = async (props: ParamsProps) => {
+  const params = await props.params;
   // Fetch doctor data
   const { data: doctor, totalAppointment } = await getDoctorById(params.id);
   if (!doctor) {
@@ -42,7 +30,7 @@ export default async function DoctorProfile({ params }: { params: { id: string }
   const ratings = await getDoctorRatings(params.id);
 
   // Transform doctor data to match client component expectations
-  const transformedDoctor: TransformedDoctor = {
+  const transformedDoctor = {
     ...doctor,
     name: doctor.name,
     specialty: doctor.specialization,
@@ -71,4 +59,6 @@ export default async function DoctorProfile({ params }: { params: { id: string }
       ratings={ratings}
     />
   );
-}
+};
+
+export default DoctorProfile;

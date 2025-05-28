@@ -1,4 +1,3 @@
-
 /**
  * Barrel file for UI components
  * This makes it easier to import multiple components from one place in Next.js
@@ -12,7 +11,7 @@ export { AspectRatio } from "./aspect-ratio";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 export { Badge, badgeVariants } from "./badge";
 export { Button, buttonVariants } from "./button";
-// export { Calendar } from "./calendar";
+export * from "./calendar";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card";
 export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./carousel";
 export { ChartContainer as Chart, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "./chart";

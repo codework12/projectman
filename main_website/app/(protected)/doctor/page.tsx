@@ -15,7 +15,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { DashboardCardsClient } from "./dashboard-cards-client";
 import { ProfileImage } from "@/components/profile-image";
-import { RecentPatientsClient } from "./recent-patients-client";
+import  RecentPatientsClient  from "./recent-patients-client";
 
 const DoctorDashboard = async () => {
   const user = await currentUser();
@@ -34,12 +34,12 @@ const DoctorDashboard = async () => {
     availableDoctors,
     monthlyData,
     last5Records,
-  } = await getDoctorDashboardStats();
+  } = await getDoctorDashboardStats(user?.id!);
 
   // Get ratings for the current doctor
   const ratings = await getDoctorRatings(user?.id!);
   const averageRating = ratings.length > 0
-    ? ratings.reduce((acc, curr) => acc + curr.rating, 0) / ratings.length
+    ? ratings.reduce((acc: any, curr: any) => acc + curr.rating, 0) / ratings.length
     : 0;
 
   const cardData = [
@@ -84,16 +84,16 @@ const DoctorDashboard = async () => {
   const greeting = new Date().getHours() < 12 ? "Good Morning" : new Date().getHours() < 18 ? "Good Afternoon" : "Good Evening";
 
   return (
-    <div className="rounded-xl py-6 px-3 flex flex-col xl:flex-row gap-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#e0f2fe] dark:from-[#0f172a] dark:to-[#134e4a] rounded-xl py-6 px-3 flex flex-col xl:flex-row gap-6">
       {/* LEFT */}
-      <div className="w-full xl:w-[69%]">
-        <div className="bg-white rounded-xl p-4 mb-8">
+      <div className="w-full xl:w-[69%] flex flex-col h-full">
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-lg p-6 mb-8 border border-[#10b981]/10 dark:border-[#10b981]/20">
           <div className="flex items-center justify-between mb-6">
             <div className="mb-6">
-              <h1 className="text-3xl font-extrabold text-gray-900 drop-shadow-sm font-sans tracking-tight">
-                <span className="font-semibold text-gray-700">{greeting},</span> <span className="font-extrabold text-gray-900">Dr. {user?.firstName} {user?.lastName}</span>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-[#1e293b] dark:text-white drop-shadow-sm font-sans tracking-tight">
+                <span className="font-semibold text-[#10b981] dark:text-[#5eead4]">{greeting},</span> <span className="font-extrabold text-[#2563eb] dark:text-[#38bdf8]">Dr. {user?.firstName}</span>
               </h1>
-              <p className="text-gray-500 text-base mt-1">
+              <p className="text-[#64748b] dark:text-gray-300 text-base mt-1">
                 Here's your dashboard. Wishing you a productive day!
               </p>
             </div>
@@ -101,7 +101,7 @@ const DoctorDashboard = async () => {
               size="sm"
               variant="outline"
               asChild
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-500 text-blue-600 font-semibold text-sm bg-white hover:bg-blue-50 hover:text-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#2563eb] dark:border-[#38bdf8] text-[#2563eb] dark:text-[#38bdf8] font-semibold text-sm bg-white dark:bg-[#134e4a] hover:bg-[#e0f2fe] dark:hover:bg-[#164e63] hover:text-[#2563eb] dark:hover:text-[#5eead4] transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-[#2563eb]/30 dark:focus:ring-[#38bdf8]/30"
             >
               <Link href={`/record/doctors/${user?.id}`}>
                 <User className="w-4 h-4 mr-1" />
@@ -117,25 +117,25 @@ const DoctorDashboard = async () => {
           <AppointmentChart data={monthlyData!} />
         </div>
 
-        <div className="bg-white rounded-xl p-4 mt-8">
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-lg p-6 mt-8 border border-[#10b981]/10 dark:border-[#10b981]/20">
           <RecentAppointments data={last5Records!} />
         </div>
       </div>
 
       {/* RIGHT */}
-      <div className="w-full xl:w-[30%]">
-        <div className="w-full h-[450px] mb-8">
-          <StatSummary data={appointmentCounts} total={totalAppointment!} />
-        </div>
+      <div className="w-full xl:w-[31%] flex flex-col gap-4 h-full justify-between">
+            <div className="animate-fadeInUp transition-all duration-300 hover:scale-[1.02]">
+              <StatSummary data={appointmentCounts} total={totalAppointment!} />
+            </div>
 
         {/* Recent Patients Card */}
         <RecentPatientsClient
-          recentPatients={
+          patients={
             (last5Records ?? [])
-              .filter((a, i, arr) =>
-                arr.findIndex(x => x.patient?.id === a.patient?.id) === i && a.patient)
+              .filter((a: any, i: number, arr: any[]) =>
+                arr.findIndex((x: any) => x.patient?.id === a.patient?.id) === i && a.patient)
               .slice(0, 4)
-              .map(a => ({
+              .map((a: any) => ({
                 id: a.patient.id,
                 first_name: a.patient.first_name,
                 last_name: a.patient.last_name,

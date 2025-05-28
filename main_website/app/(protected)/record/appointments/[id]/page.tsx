@@ -20,15 +20,15 @@ const TABS = [
   { key: "payments", label: "Payments", icon: <FileText className="w-4 h-4 mr-1" /> },
 ];
 
-const AppointmentDetailsPage = async ({
-  params,
-  searchParams,
-}: {
+interface ParamsProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const { id } = await params;
-  const search = await searchParams;
+}
+
+const AppointmentDetailsPage = async (props: ParamsProps) => {
+  const params = await props.params;
+  const search = await props.searchParams;
+  const { id } = params;
   const cat = (search?.cat as string) || "charts";
 
   const { data } = await getAppointmentWithMedicalRecordsById(Number(id));

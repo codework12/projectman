@@ -7,15 +7,15 @@ import {
   Edit, FileText, Receipt, FlaskConical, Home, MessageSquare, 
   Video, Activity, AlertTriangle, Stethoscope, Weight
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import EditProfileButton from "@/components/profile/EditProfileButton";
-import { Progress } from "@/components/ui/progress";
-import ScrollToTop from "@/components/ScrollToTop";
+import { Button } from "../../../../components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../components/ui/tabs";
+import { Badge } from "../../../../components/ui/badge";
+import { ScrollArea } from "../../../../components/ui/scroll-area";
+import EditProfileButton from "../../../../components/profile/EditProfileButton";
+import { Progress } from "../../../../components/ui/progress";
+import ScrollToTop from "../../../../components/ScrollToTop";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
 

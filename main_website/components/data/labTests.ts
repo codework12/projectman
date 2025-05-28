@@ -1,3 +1,4 @@
+
 import { LabTest } from '../models/LabTest';
 
 export const labTests: LabTest[] = [
@@ -6,160 +7,56 @@ export const labTests: LabTest[] = [
     code: '00029',
     name: 'ABO Group & RH Type',
     description: 'Find out your blood type and compatibility for blood transfusions or pregnancy',
-    price: 35.00,
+    price: 37.99,
     category: 'Blood'
   },
   {
     id: '2',
-    code: '00112',
-    name: 'Albumin',
-    description: 'Measures a protein that shows how well your liver and kidneys are working',
-    price: 5.50,
-    category: 'Liver Function'
+    code: '00165',
+    name: 'B-HCG, Qualitative, Serum',
+    description: 'Detect pregnancy by measuring the hormone hCG in the blood.',
+    price: 29.99,
+    category: 'Pregnancy Test'
   },
   {
     id: '3',
-    code: '00116',
-    name: 'ALT',
-    description: 'These help detect liver problems, such as inflammation or damage.',
-    price: 7.00,
-    category: 'Liver Function'
+    code: 'BASIC-WELLNESS',
+    name: 'Basic Wellness Panel',
+    description: 'Comprehensive health screening including CBC w/Diff, Comprehensive Metabolic Panel, Lipid Panel, Cortisol, Hemoglobin A1C, Microalbumin/Cre Ratio, and Thyroid Panel (Free T3, Free T4, TSH)',
+    price: 128.00,
+    category: 'Basic Wellness Panel'
   },
   {
     id: '4',
-    code: '00117',
-    name: 'AST',
-    description: 'These help detect liver problems, such as inflammation or damage.',
-    price: 8.00,
-    category: 'Liver Function'
+    code: '00595',
+    name: 'STD Panel, Comprehensive',
+    description: 'Comprehensive screening including HIV AB-AG SCREEN/REFLEX, RPR w/reflex, HERPES SIMPLEX V. I & II IgG, HIV Ag-Ab Screen, HIV-1 Antibody, HIV-1 Antigen, HIV-2 Antibody, N. GONORRHOEAE rRNA URINE, C. TRACHOMATIS RRNA URINE',
+    price: 130.00,
+    category: 'STD Tests'
   },
   {
     id: '5',
-    code: '00115',
-    name: 'Alkaline Phosphatase',
-    description: 'These help detect liver problems, such as inflammation or damage.',
-    price: 6.00,
-    category: 'Liver Function'
+    code: '00202',
+    name: 'Hemoglobin A1C',
+    description: 'Shows your average blood sugar over the past 3 months.',
+    price: 15.00,
+    category: 'Diabetes'
   },
   {
     id: '6',
-    code: '00141',
-    name: 'AFP (Tumor Marker)',
-    description: 'Screens for certain liver cancers or liver disease.',
-    price: 29.00,
-    category: 'Liver Function'
+    code: '00178',
+    name: 'PSA Free and Total',
+    description: 'Evaluates prostate health by comparing free and total PSA levels.',
+    price: 35.00,
+    category: 'Prostate'
   },
   {
     id: '7',
-    code: '00121',
-    name: 'Amylase',
-    description: 'Help check for pancreas issues like pancreatitis or digestive problems.',
-    price: 5.00,
-    category: 'Pancreas'
-  },
-  {
-    id: '8',
-    code: '00122',
-    name: 'Lipase',
-    description: 'Help check for pancreas issues like pancreatitis or digestive problems.',
-    price: 10.00,
-    category: 'Pancreas'
-  },
-  {
-    id: '9',
-    code: 'ANAX',
-    name: 'ANA Screen w/Reflex to Components',
-    description: 'Looks for signs of autoimmune diseases like lupus.',
-    price: 24.00,
-    category: 'Autoimmune'
-  },
-  {
-    id: '10',
-    code: '00014',
-    name: 'Anemia Panel',
-    description: 'Checks for low red blood cells, which can cause tiredness or weakness.',
-    price: 35.00,
-    category: 'Anemia'
-  },
-  {
-    id: '11',
-    code: 'L485',
-    name: 'Sickle Cell Screen (Hemoglobin Solubility)',
-    description: 'Screens for sickle cell trait or disease, which can affect blood flow and cause pain or other health issues.',
-    price: 97.00,
-    category: 'Anemia'
-  },
-  {
-    id: '12',
-    code: '00001',
-    name: 'CBC w/Diff',
-    description: 'Checks for infections, anemia, and overall blood health.',
-    price: 8.00,
-    category: 'Basic Wellness'
-  },
-  {
-    id: '13',
-    code: '00004',
-    name: 'Comprehensive Metabolic Panel',
-    description: 'Gives a full picture of your organ function, blood sugar, and electrolytes.',
-    price: 8.50,
-    category: 'Basic Wellness'
-  },
-  {
-    id: '14',
-    code: '00007',
-    name: 'Lipid Panel',
-    description: 'Measures cholesterol and fats to assess heart health.',
-    price: 18.00,
-    category: 'Basic Wellness'
-  },
-  {
-    id: '15',
-    code: 'VD25',
-    name: 'Vitamin D, 25-OH, Total',
-    description: 'Checks for vitamin D deficiency that may affect bones, energy, and immunity',
-    price: 38.00,
+    code: 'VITAMINS-MINERALS',
+    name: 'Vitamins and Minerals Panel',
+    description: 'Comprehensive panel including Vitamin B12 & Folate, Vitamin D 25-OH Total, Zinc, Phosphorus Serum, and Magnesium - checks for deficiency that may affect bones, energy, and immunity',
+    price: 110.00,
     category: 'Vitamins and Minerals'
-  },
-  {
-    id: '16',
-    code: '00013',
-    name: 'Thyroid Panel (Free T3, Free T4, TSH)',
-    description: 'Checks if your thyroid is working properly, which affects energy, weight, mood, and metabolism.',
-    price: 38.00,
-    category: 'Thyroid Function'
-  },
-  {
-    id: '17',
-    code: 'S595',
-    name: 'Chlamydia/Gonorrhea, Urine',
-    description: 'Screens for common sexually transmitted infections',
-    price: 70.00,
-    category: 'STD Tests'
-  },
-  {
-    id: '18',
-    code: 'P311',
-    name: 'HIV 5th Generation (Ag-Ab Screen, HIV1-Ab, HIV1-Ag, HIV2-Ab)',
-    description: 'Screens for HIV infection',
-    price: 38.00,
-    category: 'STD Tests'
-  },
-  {
-    id: '19',
-    code: '00595',
-    name: 'STD Panel, Comprehensive',
-    description: 'Comprehensive screening for sexually transmitted infections',
-    price: 125.00,
-    category: 'STD Tests'
-  },
-  {
-    id: '20',
-    code: 'ED1',
-    name: 'CardioPro Early Detection',
-    description: 'Identifies early warning signs of heart disease.',
-    price: 99.00,
-    category: 'Cardiac Health'
   }
 ];
 
@@ -168,4 +65,7 @@ export const getUniqueCategories = (): string[] => {
   return [...new Set(categories)];
 };
 
-export const DRAW_FEE = 13.99;
+export const DRAW_FEE = 9.99;
+
+// Disclaimer text
+export const LAB_DISCLAIMER = "Direct Consumer Lab: Fast, affordable lab tests with no doctor's visit—just order online from your patient's dashboard, receive lab slip and go straight to the lab. It's that easy.";
